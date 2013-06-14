@@ -3,13 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>归档：2012/1 | 呆呆</title>
+  <title>Windows环境下Rails安装Bootstrap失败解决方法 | 呆呆</title>
   <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="Windows环境下，Rails安装Bootstrap总会失败，提示therubyracer无法安装。
+这是因为Bootstrap使用的less文件依赖therubyracer实时执行js将less转换成css，而therubyracer这个gem并没有对应的Windows版本。
+Hiran Pei">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="Windows环境下Rails安装Bootstrap失败解决方法"/>
   <meta property="og:site_name" content="呆呆"/>
 
   
@@ -42,25 +46,66 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title">2012/1</h2>
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2012-12-15T16:12:40.000Z"><a href="/2012/12/16/windows环境下rails安装bootstrap失败解决方法/">12月 16 2012</a></time>
+      
+      
+  
+    <h1 class="title">Windows环境下Rails安装Bootstrap失败解决方法</h1>
+  
 
+    </header>
+    <div class="entry">
+      
+        <p>Windows环境下，Rails安装Bootstrap总会失败，提示therubyracer无法安装。</p>
+<p>这是因为Bootstrap使用的less文件依赖therubyracer实时执行js将less转换成css，而therubyracer这个gem并没有对应的Windows版本。</p>
+<p><a href="https://github.com/hiranpeiris">Hiran Peiris</a>在github上提供了提供了<a href="https://github.com/hiranpeiris/therubyracer_for_windows">解决方案</a>，他编译了所有的dll和gem。这下，我们终于可以在Windows下用Bootstrap啦。</p>
 
-  <div class="archive">
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2012-01-27T20:29:55.000Z"><a href="/2012/01/28/翻译javascript-scoping-and-hoisting/">1月 28 2012</a></time>
-            
-              <h1 class="title"><a href="/2012/01/28/翻译javascript-scoping-and-hoisting/">[翻译]JavaScript Scoping and Hoisting</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Rails/">Rails</a>
   </div>
+
+        
+<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
+  <span class="bds_more">分享到：</span>
+  <a class="bds_qzone"></a>
+  <a class="bds_tsina"></a>
+  <a class="bds_tqq"></a>
+  <a class="bds_renren"></a>
+  <a class="bds_t163"></a>
+  <a class="shareCount"></a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -106,7 +151,7 @@ var disqus_shortname = 'betarabbit';
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
   dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }());
 </script>

@@ -3,27 +3,28 @@
 <head>
   <meta charset="utf-8">
   
-  <title>String Primitive和String Object | 呆呆</title>
+  <title>RequireJS学习 | 呆呆</title>
   <meta name="author" content="BetaRabbit">
   
-  <meta name="description" content="网上看到下面这段代码，很有意思。
-1
-2
-3
-4
-5
-6
-7
-String.prototype.cut = function (len) {
-  return this.length &gt; len ? this.substring(0, len) + '...' : this;
-};
+  <meta name="description" content="RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。
+最新版可以在这里下载。
+基本用法
+假设你的工程目录结构如下：
 
-var ">
+project
+index.html
+js
+lib
+jquery.js
+
+
+app
+sub_ap">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="String Primitive和String Object"/>
+  <meta property="og:title" content="RequireJS学习"/>
   <meta property="og:site_name" content="呆呆"/>
 
   
@@ -62,17 +63,65 @@ var ">
     <header>
       
         <div class="icon"></div>
-        <time datetime="2012-11-03T16:26:45.000Z"><a href="/2012/11/04/string-primitive和string-object/">11月 4 2012</a></time>
+        <time datetime="2012-11-19T08:38:20.000Z"><a href="/2012/11/19/requirejs学习/">11月 19 2012</a></time>
       
       
   
-    <h1 class="title">String Primitive和String Object</h1>
+    <h1 class="title">RequireJS学习</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>网上看到下面这段代码，很有意思。</p>
+        <p>RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。</p>
+<p>最新版可以在<a href="http://requirejs.org/docs/download.html">这里</a>下载。</p>
+<h2>基本用法</h2>
+<p>假设你的工程目录结构如下：</p>
+<ul>
+<li>project<ul>
+<li>index.html</li>
+<li>js<ul>
+<li>lib<ul>
+<li>jquery.js</li>
+</ul>
+</li>
+<li>app<ul>
+<li>sub_app.js</li>
+<li>app.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>首先，将requirejs.js放入js/lib目录。</p>
+<ul>
+<li>project<ul>
+<li>index.html</li>
+<li>js<ul>
+<li>lib<ul>
+<li>jquery.js</li>
+<li>require.js</li>
+</ul>
+</li>
+<li>app<ul>
+<li>sub_app.js</li>
+<li>app.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>然后，在index.html中引入<code>&lt;script&gt;</code>用来加载require.js。</p>
+<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">script</span> <span class="attribute">data-main</span>=<span class="value">"js/app"</span> <span class="attribute">src</span>=<span class="value">"js/lib/require.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+
+<p>在app.js中，使用<code>require</code>方法加载其他脚本</p>
 <figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
 2
 3
@@ -80,50 +129,71 @@ var ">
 5
 6
 7
-</pre></td><td class="code"><pre>String.prototype.cut = <span class="function"><span class="keyword">function</span> <span class="params">(len)</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.length &gt; len ? <span class="keyword">this</span>.substring(<span class="number">0</span>, len) + <span class="string">'...'</span> : <span class="keyword">this</span>;
-};
-
-<span class="keyword">var</span> obj = [<span class="string">"Superman"</span>, <span class="string">"Batman"</span>, <span class="string">"Iron Man"</span>];
-console.log(<span class="keyword">typeof</span> obj[<span class="number">1</span>].cut(<span class="number">6</span>));
-console.log(obj[<span class="number">1</span>].cut(<span class="number">6</span>));
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre>requirejs.config({
+    <span class="comment">// 默认从js/lib目录加载</span>
+    baseUrl: <span class="string">'js/lib'</span>,
+    <span class="comment">// 如果模块ID以app开头，则从js/app目录加载</span>
+    <span class="comment">// paths相对于baseUrl设定</span>
+    <span class="comment">// 不要指定".js"后缀，因为paths可以是一个目录</span>
+    paths: {
+        app: <span class="string">'../app'</span>,
+        jquery: <span class="string">'jquery.min'</span>,
+    }
+});
+ 
+<span class="comment">// app入口</span>
+require([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
+    sub.hello();
+});
 </pre></td></tr></table></figure>
 
 
-<p>这段代码很简单，判断字符串的长度，如果大于给定长度（L）输出，输出字符串前L位加上“…”，否则输出字符串本身。</p>
-<p>那么，上面的代码是不是和我们期待的一样输出下面的内容呢?</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="string">"String"</span>
-<span class="string">"Batman"</span>
-</pre></td></tr></table></figure>
-
-
-<p>答案是否定的，实际的输出其实是:</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="string">"object"</span>
-&lt;String Object&gt;
-</pre></td></tr></table></figure>
-
-
-<p>这其实是因为String对象(String Object)和String基本类型(String Primitive)的不同导致的。字符串在JavaScript中有两种存在形式:</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="keyword">new</span> String(<span class="string">'object'</span>);<span class="comment">// String Object</span>
-<span class="string">'primitive'</span>;<span class="comment">// String Primitive</span>
-</pre></td></tr></table></figure>
-
-
-<p>String的所有实用方法其实都是在String对象的prototype上，String基本类型是没有这些方法的。</p>
-<p>因此当执行<code>&#39;primitive&#39;.slice(0)</code>时，JavaScript会自动将基本类型包装成对应的对象，调用对象上的方法，完成之后自动将对象销毁。因此，最上面的cut函数中this其实已经不是String Primitive而是String Object，当我们直接返回<code>this</code>时，返回值其实是”Batman”的String Object，所以<code>typeof</code>返回<code>object</code>。</p>
-<p>所以，这个cut函数正确写法应该用String转换函数将Object转为Primitive。</p>
+<p>在sub_app.js中定义一个module</p>
 <figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
 2
 3
-</pre></td><td class="code"><pre>String.prototype.cut = <span class="function"><span class="keyword">function</span> <span class="params">(len)</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.length &gt; len ? <span class="keyword">this</span>.substring(<span class="number">0</span>, len) + <span class="string">'...'</span> : String(<span class="keyword">this</span>);
-};
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre><span class="comment">// define相对于baseUrl设定</span>
+define([<span class="string">'jquery'</span>], <span class="function"><span class="keyword">function</span> <span class="params">($)</span> {</span>
+    <span class="keyword">return</span> {
+        log: <span class="function"><span class="keyword">function</span> <span class="params">(msg)</span> {</span>
+            <span class="keyword">if</span> (window.console &amp;&amp; console.log) {
+                console.log(msg);
+            } <span class="keyword">else</span> {
+                alert(msg);
+            }
+        },
+        hello: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+            <span class="keyword">this</span>.log(<span class="string">"Hello, I'm powered by jQuery "</span> + $().jquery + <span class="string">"!"</span>);
+        }
+    };
+});
+</pre></td></tr></table></figure>
+
+
+<p>现在，打开浏览器的控制台，应该能看到我们自定义的module成功使用jQuery输出了下面这句话：</p>
+<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>Hello, I'm powered by jQuery 1.8.3! 
 </pre></td></tr></table></figure>
 
       

@@ -1,4 +1,4 @@
-title: JavaScript Throttle &amp; Debounce
+title: "JavaScript Throttle &amp; Debounce"
 date: 2013-03-19 00:23:47
 tags: JavaScript
 ---

@@ -467,6 +467,265 @@ test(throttle, <span class="number">1000</span>);
     <header>
       
         <div class="icon"></div>
+        <time datetime="2012-12-15T16:12:40.000Z"><a href="/2012/12/16/windows环境下rails安装bootstrap失败解决方法/">12月 16 2012</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2012/12/16/windows环境下rails安装bootstrap失败解决方法/">Windows环境下Rails安装Bootstrap失败解决方法</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Windows环境下，Rails安装Bootstrap总会失败，提示therubyracer无法安装。</p>
+<p>这是因为Bootstrap使用的less文件依赖therubyracer实时执行js将less转换成css，而therubyracer这个gem并没有对应的Windows版本。</p>
+<p><a href="https://github.com/hiranpeiris">Hiran Peiris</a>在github上提供了提供了<a href="https://github.com/hiranpeiris/therubyracer_for_windows">解决方案</a>，他编译了所有的dll和gem。这下，我们终于可以在Windows下用Bootstrap啦。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2012-11-19T08:38:20.000Z"><a href="/2012/11/19/requirejs学习/">11月 19 2012</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2012/11/19/requirejs学习/">RequireJS学习</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。</p>
+<p>最新版可以在<a href="http://requirejs.org/docs/download.html">这里</a>下载。</p>
+<h2>基本用法</h2>
+<p>假设你的工程目录结构如下：</p>
+<ul>
+<li>project<ul>
+<li>index.html</li>
+<li>js<ul>
+<li>lib<ul>
+<li>jquery.js</li>
+</ul>
+</li>
+<li>app<ul>
+<li>sub_app.js</li>
+<li>app.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>首先，将requirejs.js放入js/lib目录。</p>
+<ul>
+<li>project<ul>
+<li>index.html</li>
+<li>js<ul>
+<li>lib<ul>
+<li>jquery.js</li>
+<li>require.js</li>
+</ul>
+</li>
+<li>app<ul>
+<li>sub_app.js</li>
+<li>app.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>然后，在index.html中引入<code>&lt;script&gt;</code>用来加载require.js。</p>
+<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">script</span> <span class="attribute">data-main</span>=<span class="value">"js/app"</span> <span class="attribute">src</span>=<span class="value">"js/lib/require.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+
+<p>在app.js中，使用<code>require</code>方法加载其他脚本</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre>requirejs.config({
+    <span class="comment">// 默认从js/lib目录加载</span>
+    baseUrl: <span class="string">'js/lib'</span>,
+    <span class="comment">// 如果模块ID以app开头，则从js/app目录加载</span>
+    <span class="comment">// paths相对于baseUrl设定</span>
+    <span class="comment">// 不要指定".js"后缀，因为paths可以是一个目录</span>
+    paths: {
+        app: <span class="string">'../app'</span>,
+        jquery: <span class="string">'jquery.min'</span>,
+    }
+});
+ 
+<span class="comment">// app入口</span>
+require([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
+    sub.hello();
+});
+</pre></td></tr></table></figure>
+
+
+<p>在sub_app.js中定义一个module</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre><span class="comment">// define相对于baseUrl设定</span>
+define([<span class="string">'jquery'</span>], <span class="function"><span class="keyword">function</span> <span class="params">($)</span> {</span>
+    <span class="keyword">return</span> {
+        log: <span class="function"><span class="keyword">function</span> <span class="params">(msg)</span> {</span>
+            <span class="keyword">if</span> (window.console &amp;&amp; console.log) {
+                console.log(msg);
+            } <span class="keyword">else</span> {
+                alert(msg);
+            }
+        },
+        hello: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+            <span class="keyword">this</span>.log(<span class="string">"Hello, I'm powered by jQuery "</span> + $().jquery + <span class="string">"!"</span>);
+        }
+    };
+});
+</pre></td></tr></table></figure>
+
+
+<p>现在，打开浏览器的控制台，应该能看到我们自定义的module成功使用jQuery输出了下面这句话：</p>
+<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>Hello, I'm powered by jQuery 1.8.3! 
+</pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2012-11-08T15:41:34.000Z"><a href="/2012/11/08/ruby的private和protected/">11月 8 2012</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2012/11/08/ruby的private和protected/">Ruby的private和protected</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>今天，下面这段程序让我纠结了很久，Ruby中private的概念真的很奇怪。。。</p>
+<figure class="highlight lang-ruby"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="code"><pre><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="title">private</span></span>
+  <span class="function"><span class="keyword">def</span> <span class="title">test_print</span></span>
+    puts <span class="string">'test'</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Test2</span> <span class="inheritance">&lt; <span class="parent">Test</span></span></span>
+  <span class="function"><span class="keyword">def</span> <span class="title">test_print2</span></span>
+    <span class="comment"># self.test_print #=&gt; 这里加上self就不能调用，private method `test_print' called for # (NoMethodError)</span>
+    test_print <span class="comment">#=&gt; 不加self就能调用</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="constant">Test2</span>.new.test_print2 
+</pre></td></tr></table></figure>
+
+
+<p>为什么不加self的话，private也可以调用父类的方法呢？</p>
+<p>原来在Ruby中，private和Java或者其他语言不一样，子类也可以调用，只是不能指定调用者。</p>
+<p>翻了下《The Ruby Way》，书上说：</p>
+<blockquote><p>private：类和子类都能调用，但是private方法不能指定调用者，默认为self。</p>
+<p>protected：类和子类都能调用，可以指定调用者。</p>
+</blockquote>
+
+
+<p>这就解释了为什么上面的代码中，用self调用会出错，而不加self就能正确执行。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2012-11-03T16:26:45.000Z"><a href="/2012/11/04/string-primitive和string-object/">11月 4 2012</a></time>
       
       
@@ -901,7 +1160,7 @@ spam(); <span class="comment">// ReferenceError "spam is not defined"</span>
       
       
   
-    <h1 class="title"><a href="/2011/09/08/javascript中的“this”/">JavaScript中的“this”</a></h1>
+    <h1 class="title"><a href="/2011/09/08/javascript中的“this”/">JavaScript中的&quot;this&quot;</a></h1>
   
 
     </header>
@@ -1040,7 +1299,11 @@ foo.call(<span class="number">1</span>, <span class="number">2</span>); <span cl
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>7</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>8</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>1</small></li>
   
   </ul>
 </div>

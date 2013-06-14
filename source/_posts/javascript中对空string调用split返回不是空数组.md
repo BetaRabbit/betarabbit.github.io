@@ -1,4 +1,4 @@
-title: Javascript中对空string调用split返回不是空数组
+title: "Javascript中对空string调用split返回不是空数组"
 date: 2012-08-02 02:57:06
 tags: JavaScript
 ---
