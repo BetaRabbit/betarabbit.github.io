@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>如何将一个String和多个String值进行比较 | 呆呆</title>
+  <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="开发中我们经常需要将一个String和多个String值进行比较。直觉反应是使用||符号连接多个===完成，比如：
+1
+2
+3
+if (string === 'banana' || string === 'pineapple') {
+   fruitColor = 'yellow';
+}
+
+
+这样能">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="如何将一个String和多个String值进行比较"/>
+  <meta property="og:site_name" content="呆呆"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">呆呆</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-06-08T19:26:47.000Z"><a href="/2013/06/09/如何将一个string和多个string值进行比较/">6月 9 2013</a></time>
+      
+      
+  
+    <h1 class="title">如何将一个String和多个String值进行比较</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>开发中我们经常需要将一个String和多个String值进行比较。直觉反应是使用<code>||</code>符号连接多个<code>===</code>完成，比如：</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> (string === <span class="string">'banana'</span> || string === <span class="string">'pineapple'</span>) {
+   fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+<p>这样能够很好的完成需求，但总觉得有点笨，并且对扩展不友好，当我们的水果种类变多时：</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> (string === <span class="string">'banana'</span> || string === <span class="string">'pineapple'</span> || string === <span class="string">'mongo'</span> || string === <span class="string">'lemon'</span>) {
+   fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+<p>上面的代码看起来就不那么好看了，让我们看看有什么其他方式能够处理这种需求。</p>
+<h2>Switch</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre><span class="keyword">switch</span>(string) {
+    <span class="keyword">case</span> <span class="string">'banana'</span>:
+    <span class="keyword">case</span> <span class="string">'pineapple'</span>:
+    <span class="keyword">case</span> <span class="string">'mongo'</span>:
+    <span class="keyword">case</span> <span class="string">'lemon'</span>:
+      fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+<p>这看起来不错，但是总是要多打些字，对于不喜欢多打字的人来说不是个好方法。</p>
+<h2>Array</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> ([<span class="string">'banana'</span>, <span class="string">'pineapple'</span>, <span class="string">'mongo'</span>, <span class="string">'lemon'</span>].indexOf(string) &gt;= <span class="number">0</span>) {
+    fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+<p>这下好多了，但还有个问题，IE9以下的IE浏览器并不支持<code>indexOf</code>方法，如果你要在IE&lt;=8的环境中使用Array方式比较多个string值，要么自己写一个<code>indexOf</code>方法，要么就得引入一些库来做浏览器兼容。</p>
+<h2>jQuery</h2>
+<p>jQuery提供了一个<code>inArray</code>方法</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> ($.inArray([<span class="string">'banana'</span>, <span class="string">'pineapple'</span>, <span class="string">'mongo'</span>, <span class="string">'lemon'</span>], string) &gt;= <span class="number">0</span>) {
+    fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+
+<h2>Underscore</h2>
+<p>Underscore提供了一个<code>contains</code>方法</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> (_.contains([<span class="string">'banana'</span>, <span class="string">'pineapple'</span>, <span class="string">'mongo'</span>, <span class="string">'lemon'</span>], string)) {
+    fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+
+<h2>正则表达式</h2>
+<p>当然，我们还有终极武器——正则表达式</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> (<span class="regexp">/^(banana|pineapple|mongo|lemon)$/</span>.test(string)) {
+    fruitColor = <span class="string">'yellow'</span>;
+}
+</pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        
+<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
+  <span class="bds_more">分享到：</span>
+  <a class="bds_qzone"></a>
+  <a class="bds_tsina"></a>
+  <a class="bds_tqq"></a>
+  <a class="bds_renren"></a>
+  <a class="bds_t163"></a>
+  <a class="shareCount"></a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:betarabbit.github.io/">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>6</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2013 BetaRabbit
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'betarabbit';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
