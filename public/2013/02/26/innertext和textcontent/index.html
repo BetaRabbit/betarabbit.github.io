@@ -3,23 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Javascript中对空string调用split返回不是空数组 | 呆呆</title>
+  <title>innerText和textContent | 呆呆</title>
   <meta name="author" content="BetaRabbit">
   
-  <meta name="description" content="今天在工作中发现一个诡异的问题，理论上应该是没有元素的数组，长度居然是1。查了半天，原来是Javascript中的split和其他语言中不同，即对空string使用split会返回含有一个空string的数组，而不是一个空数组。
+  <meta name="description" content="今天在使用innerText时遇到一个兼容性问题，FireFox不支持innerText方法，查了MDN，发现FireFox下有个类似的方法，叫textContent，它和IE的innerText类似， 都是用来获取（设置）元素中text的方法。
+语法
+
+设置
 1
-2
-3
-4
-5
-6
-var str = &quot;&quot;,
-    arr =">
+element.textConte">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Javascript中对空string调用split返回不是空数组"/>
+  <meta property="og:title" content="innerText和textContent"/>
   <meta property="og:site_name" content="呆呆"/>
 
   
@@ -58,35 +55,53 @@ var str = &quot;&quot;,
     <header>
       
         <div class="icon"></div>
-        <time datetime="2012-08-01T18:57:06.000Z"><a href="/2012/08/02/javascript中对空string调用split返回不是空数组/">8月 2 2012</a></time>
+        <time datetime="2013-02-26T12:11:32.000Z"><a href="/2013/02/26/innertext和textcontent/">2月 26 2013</a></time>
       
       
   
-    <h1 class="title">Javascript中对空string调用split返回不是空数组</h1>
+    <h1 class="title">innerText和textContent</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>今天在工作中发现一个诡异的问题，理论上应该是没有元素的数组，长度居然是1。查了半天，原来是Javascript中的split和其他语言中不同，即对空string使用split会返回含有一个空string的数组，而不是一个空数组。</p>
+        <p>今天在使用<code>innerText</code>时遇到一个兼容性问题，FireFox不支持<code>innerText</code>方法，查了MDN，发现FireFox下有个类似的方法，叫<code>textContent</code>，它和IE的<code>innerText</code>类似， 都是用来获取（设置）元素中text的方法。</p>
+<h2>语法</h2>
+<ul>
+<li><p>设置</p>
 <figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="keyword">var</span> str = <span class="string">""</span>,
-    arr = str.split(<span class="string">"_"</span>);
- 
-console.log(arr.length === <span class="number">1</span>); <span class="comment">//true</span>
-console.log(arr === []); <span class="comment">//false</span>
-console.log(arr === [<span class="string">""</span>]); <span class="comment">//true</span>
+</pre></td><td class="code"><pre>element.textContent = “text”;
+</pre></td></tr></table></figure>
+</li>
+<li><p>获取</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="keyword">var</span> text = element.textContent;
 </pre></td></tr></table></figure>
 
 
-<p>参考MDN，也有类似的说明。</p>
-<blockquote><p>Note: When the string is empty, split returns an array containing one empty string, rather than an empty array.</p>
-</blockquote>
+</li>
+</ul>
+<p><strong>Note</strong>: textContent和innerText类似，也会同时获取子元素的text content，比如</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>&lt;div&gt;<span class="keyword">this</span> is &lt;span&gt;a&lt;<span class="regexp">/span&gt; text!&lt;/</span>div&gt;
+<span class="comment">// div.textContent == "this is a text!"</span>
+</pre></td></tr></table></figure>
+
+
+<h2>与<code>innerText</code>的区别</h2>
+<ul>
+<li><code>textContent</code>会获取所有元素的content，包括<code>&lt;script&gt;</code>和<code>&lt;style&gt;</code>元素</li>
+<li><code>innerText</code>不会获取hidden元素的content，而<code>textContent</code>会</li>
+<li><code>innerText</code>会触发reflow，而<code>textContent</code>不会</li>
+<li><code>innerText</code>返回值会被格式化，而<code>textContent</code>不会</li>
+</ul>
+<h2>主流浏览器支持情况</h2>
+<ul>
+<li>IE 9+</li>
+<li>Chrome 1+</li>
+<li>FireFox(Gecko)</li>
+</ul>
 
       
     </div>

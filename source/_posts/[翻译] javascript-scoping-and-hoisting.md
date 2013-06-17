@@ -1,4 +1,4 @@
-title: "[翻译]JavaScript Scoping and Hoisting"
+title: "[翻译] JavaScript Scoping and Hoisting"
 date: 2012-01-28 04:29:55
 tags: JavaScript
 ---

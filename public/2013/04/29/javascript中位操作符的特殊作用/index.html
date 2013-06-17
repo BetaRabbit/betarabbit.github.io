@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Javascript中对空string调用split返回不是空数组 | 呆呆</title>
+  <title>JavaScript中位操作符的特殊作用 | 呆呆</title>
   <meta name="author" content="BetaRabbit">
   
-  <meta name="description" content="今天在工作中发现一个诡异的问题，理论上应该是没有元素的数组，长度居然是1。查了半天，原来是Javascript中的split和其他语言中不同，即对空string使用split会返回含有一个空string的数组，而不是一个空数组。
-1
-2
-3
-4
-5
-6
-var str = &quot;&quot;,
-    arr =">
+  <meta name="description" content="Javascript主要有以下几种位操作符：
+
+AND ( &amp; )
+OR ( | )
+XOR ( ^ )
+NOT ( ~ )
+LEFT SHIFT ( &lt;&lt; )
+RIGHT SHIFT ( &gt;&gt; )
+ZERO-FILL RIGHT SHIFT ( &gt;&gt;&amp;g">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Javascript中对空string调用split返回不是空数组"/>
+  <meta property="og:title" content="JavaScript中位操作符的特殊作用"/>
   <meta property="og:site_name" content="呆呆"/>
 
   
@@ -58,35 +58,47 @@ var str = &quot;&quot;,
     <header>
       
         <div class="icon"></div>
-        <time datetime="2012-08-01T18:57:06.000Z"><a href="/2012/08/02/javascript中对空string调用split返回不是空数组/">8月 2 2012</a></time>
+        <time datetime="2013-04-29T15:47:00.000Z"><a href="/2013/04/29/javascript中位操作符的特殊作用/">4月 29 2013</a></time>
       
       
   
-    <h1 class="title">Javascript中对空string调用split返回不是空数组</h1>
+    <h1 class="title">JavaScript中位操作符的特殊作用</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>今天在工作中发现一个诡异的问题，理论上应该是没有元素的数组，长度居然是1。查了半天，原来是Javascript中的split和其他语言中不同，即对空string使用split会返回含有一个空string的数组，而不是一个空数组。</p>
+        <p>Javascript主要有以下几种位操作符：</p>
+<ul>
+<li>AND ( <code>&amp;</code> )</li>
+<li>OR ( <code>|</code> )</li>
+<li>XOR ( <code>^</code> )</li>
+<li>NOT ( <code>~</code> )</li>
+<li>LEFT SHIFT ( <code>&lt;&lt;</code> )</li>
+<li>RIGHT SHIFT ( <code>&gt;&gt;</code> )</li>
+<li>ZERO-FILL RIGHT SHIFT ( <code>&gt;&gt;&gt;</code> )</li>
+</ul>
+<p>一般来说，我们在Javascript中很少能用到这些位操作符，但在某些特殊情况下，这些简单的操作符却能抵得上好几行代码（如果不在乎可读性的话）。</p>
+<h2>-(n+1)</h2>
+<p>对一个数进行<code>~</code>运算，等同于<code>-(n+1)</code></p>
 <figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="keyword">var</span> str = <span class="string">""</span>,
-    arr = str.split(<span class="string">"_"</span>);
- 
-console.log(arr.length === <span class="number">1</span>); <span class="comment">//true</span>
-console.log(arr === []); <span class="comment">//false</span>
-console.log(arr === [<span class="string">""</span>]); <span class="comment">//true</span>
+</pre></td><td class="code"><pre>~<span class="number">1</span> === -<span class="number">2</span> <span class="comment">// =&gt; true</span>
 </pre></td></tr></table></figure>
 
 
-<p>参考MDN，也有类似的说明。</p>
-<blockquote><p>Note: When the string is empty, split returns an array containing one empty string, rather than an empty array.</p>
-</blockquote>
+<p><strong>Note</strong>: 这只能应用于整数部分，<code>~1.1 === -2</code></p>
+<p>这在实际使用中常常配合<code>indexOf</code>一起使用，<code>if (~array.indexOf(string))</code>等同于<code>if (array中没有string)</code></p>
+<h2>取整(忽略小数部分)</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>~~<span class="number">1.1</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
+<span class="number">1.1</span> ^ <span class="number">0</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
+</pre></td></tr></table></figure>
+
+
+<p>这两个在某些JS库或游戏编程中经常使用。</p>
+<h2>总结</h2>
+<p>总的来说，位操作符毕竟可读性不太好，列出来只是为了以后遇到这样的代码能看的懂，实际项目中还是不要玩这些花的东西比较好。</p>
 
       
     </div>

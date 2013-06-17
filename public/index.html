@@ -189,11 +189,257 @@ mousedown: <span class="keyword">function</span>( event ) {
     <header>
       
         <div class="icon"></div>
-        <time datetime="2013-06-08T19:26:47.000Z"><a href="/2013/06/09/如何将一个string和多个string值进行比较/">6月 9 2013</a></time>
+        <time datetime="2013-05-30T16:43:11.000Z"><a href="/2013/05/31/理解underscore和lo-dash-collections-_each/">5月 31 2013</a></time>
       
       
   
-    <h1 class="title"><a href="/2013/06/09/如何将一个string和多个string值进行比较/">如何将一个String和多个String值进行比较</a></h1>
+    <h1 class="title"><a href="/2013/05/31/理解underscore和lo-dash-collections-_each/">[理解Underscore和Lo-Dash] Collections _.each</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1>_.each</h1>
+<p>遍历集合，对集合中的每个元素执行回调。</p>
+<h1>API</h1>
+<h2>Lo-Dash</h2>
+<p>_.forEach(collection [, callback=identity, thisArg])</p>
+<h3>Aliases</h3>
+<p><em>each</em></p>
+<h3>Arguments</h3>
+<ol>
+<li><code>collection</code> <em>(Array|Object|String)</em>: 要遍历的集合</li>
+<li><code>[callback=identity]</code> <em>(Function)</em>: 每次迭代中调用的函数</li>
+<li><code>[thisArg]</code> <em>(任意)</em>: 绑定到<code>callback</code>的<code>this</code></li>
+<li><code>callback</code>接受三个参数: <code>(value, index|key, collection)</code></li>
+</ol>
+<h3>Returns</h3>
+<p><em>(Array, Object, String)</em>: 返回<code>collection</code>.</p>
+<h2>Underscore</h2>
+<p>_.each(list, iterator, [context])</p>
+<h3>Aliases</h3>
+<p><em>forEach</em></p>
+<h3>Arguments</h3>
+<ol>
+<li><code>list</code> <em>(Array|Object|String)</em>: 要遍历的集合</li>
+<li><code>iterator</code> <em>(Function)</em>: 每次迭代中调用的函数</li>
+<li><code>[context]</code> <em>(任意)</em>: 绑定到<code>callback</code>的<code>this</code></li>
+<li><code>iterator</code>接受三个参数: <code>(element|value, index|key, list)</code></li>
+</ol>
+<h3>Returns</h3>
+<p><em>(Array, Object, String)</em>: 返回<code>undefined</code>.</p>
+<h2>Note</h2>
+<ul>
+<li>Lo-Dash可以省略回调函数，而Underscore则必须传入</li>
+<li>Lo-Dash可以通过在回调中返回<code>false</code>提前结束迭代</li>
+<li>Lo-Dash会返回Collection从而允许链式操作，Underscore的返回值则是undefined</li>
+</ul>
+<h1>Example</h1>
+<h2>Lo-Dash</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre>_.forEach([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])
+<span class="comment">// =&gt; 返回[1,2,3]</span>
+
+_([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]).forEach(alert).join(<span class="string">','</span>);
+<span class="comment">// =&gt; alert每个数字并返回'1,2,3'</span>
+
+_.forEach({ <span class="string">'one'</span>: <span class="number">1</span>, <span class="string">'two'</span>: <span class="number">2</span>, <span class="string">'three'</span>: <span class="number">3</span> }, alert);
+<span class="comment">// =&gt; alert每个数字value(不保证按照定义的顺序执行)</span>
+</pre></td></tr></table></figure>
+
+
+<h2>Underscore</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>_.each([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], alert);
+<span class="comment">// =&gt; alert每个数字</span>
+_.each({one : <span class="number">1</span>, two : <span class="number">2</span>, three : <span class="number">3</span>}, alert);
+<span class="comment">// =&gt; alert每个数字value(不保证按照定义的顺序执行)</span>
+</pre></td></tr></table></figure>
+
+
+<h1>Source</h1>
+<h2>Lo-Dash</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">forEach</span><span class="params">(collection, callback, thisArg)</span> {</span>
+    <span class="keyword">var</span> index = -<span class="number">1</span>,
+    length = collection ? collection.length : <span class="number">0</span>;
+
+    callback = callback &amp;&amp; <span class="keyword">typeof</span> thisArg == <span class="string">'undefined'</span> ? callback : lodash.createCallback(callback, thisArg);
+    <span class="keyword">if</span> (<span class="keyword">typeof</span> length == <span class="string">'number'</span>) {
+        <span class="keyword">while</span> (++index &lt; length) {
+            <span class="keyword">if</span> (callback(collection[index], index, collection) === <span class="literal">false</span>) {
+                <span class="keyword">break</span>;
+            }
+        }
+    } <span class="keyword">else</span> {
+        forOwn(collection, callback);
+    }
+    <span class="keyword">return</span> collection;
+}
+</pre></td></tr></table></figure>
+
+
+<h2>Underscore</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="keyword">var</span> each = _.each = _.forEach = <span class="keyword">function</span>(obj, iterator, context) {
+    <span class="keyword">if</span> (obj == <span class="literal">null</span>) <span class="keyword">return</span>;
+    <span class="keyword">if</span> (nativeForEach &amp;&amp; obj.forEach === nativeForEach) {
+      obj.forEach(iterator, context);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (obj.length === +obj.length) {
+      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, l = obj.length; i &lt; l; i++) {
+        <span class="keyword">if</span> (iterator.call(context, obj[i], i, obj) === breaker) <span class="keyword">return</span>;
+      }
+    } <span class="keyword">else</span> {
+      <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> obj) {
+        <span class="keyword">if</span> (_.has(obj, key)) {
+          <span class="keyword">if</span> (iterator.call(context, obj[key], key, obj) === breaker) <span class="keyword">return</span>;
+        }
+      }
+    }
+  };
+</pre></td></tr></table></figure>
+
+
+<h1>Additional</h1>
+<ul>
+<li><code>obj.length === +obj.length</code></li>
+</ul>
+<p><code>+obj</code>: 将obj转换成10进制数，否则返回<code>NaN</code>。因此，上面的判断等价于<code>obj.length &amp;&amp; typeof obj.length == &#39;number&#39;</code></p>
+<ul>
+<li><code>if (iterator.call(context, obj[i], i, obj) === breaker) return;</code></li>
+</ul>
+<p><code>breaker</code>是预先定义的空对象({})，Underscore内部用于提前结束循环的标志，并没有对外公开。另外，因为对象的<code>===</code>比较的是对象地址，所以就算用户在自己的iterator中返回<code>{}</code>，上述<code>if</code>仍然不成立</p>
+<ul>
+<li><code>for in</code>循环不会遍历non-enumerable属性，因此像<code>Object</code>的<code>toString</code>等就不会被迭代</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-04-29T15:47:00.000Z"><a href="/2013/04/29/javascript中位操作符的特殊作用/">4月 29 2013</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2013/04/29/javascript中位操作符的特殊作用/">JavaScript中位操作符的特殊作用</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Javascript主要有以下几种位操作符：</p>
+<ul>
+<li>AND ( <code>&amp;</code> )</li>
+<li>OR ( <code>|</code> )</li>
+<li>XOR ( <code>^</code> )</li>
+<li>NOT ( <code>~</code> )</li>
+<li>LEFT SHIFT ( <code>&lt;&lt;</code> )</li>
+<li>RIGHT SHIFT ( <code>&gt;&gt;</code> )</li>
+<li>ZERO-FILL RIGHT SHIFT ( <code>&gt;&gt;&gt;</code> )</li>
+</ul>
+<p>一般来说，我们在Javascript中很少能用到这些位操作符，但在某些特殊情况下，这些简单的操作符却能抵得上好几行代码（如果不在乎可读性的话）。</p>
+<h2>-(n+1)</h2>
+<p>对一个数进行<code>~</code>运算，等同于<code>-(n+1)</code></p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>~<span class="number">1</span> === -<span class="number">2</span> <span class="comment">// =&gt; true</span>
+</pre></td></tr></table></figure>
+
+
+<p><strong>Note</strong>: 这只能应用于整数部分，<code>~1.1 === -2</code></p>
+<p>这在实际使用中常常配合<code>indexOf</code>一起使用，<code>if (~array.indexOf(string))</code>等同于<code>if (array中没有string)</code></p>
+<h2>取整(忽略小数部分)</h2>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>~~<span class="number">1.1</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
+<span class="number">1.1</span> ^ <span class="number">0</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
+</pre></td></tr></table></figure>
+
+
+<p>这两个在某些JS库或游戏编程中经常使用。</p>
+<h2>总结</h2>
+<p>总的来说，位操作符毕竟可读性不太好，列出来只是为了以后遇到这样的代码能看的懂，实际项目中还是不要玩这些花的东西比较好。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-04-20T14:34:47.000Z"><a href="/2013/04/20/如何将一个string和多个string值进行比较/">4月 20 2013</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2013/04/20/如何将一个string和多个string值进行比较/">如何将一个String和多个String值进行比较</a></h1>
   
 
     </header>
@@ -446,6 +692,74 @@ mousedown: <span class="keyword">function</span>( event ) {
 test(debounce, <span class="number">1000</span>);
 test(throttle, <span class="number">1000</span>);
 </pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-02-26T12:11:32.000Z"><a href="/2013/02/26/innertext和textcontent/">2月 26 2013</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2013/02/26/innertext和textcontent/">innerText和textContent</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>今天在使用<code>innerText</code>时遇到一个兼容性问题，FireFox不支持<code>innerText</code>方法，查了MDN，发现FireFox下有个类似的方法，叫<code>textContent</code>，它和IE的<code>innerText</code>类似， 都是用来获取（设置）元素中text的方法。</p>
+<h2>语法</h2>
+<ul>
+<li><p>设置</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>element.textContent = “text”;
+</pre></td></tr></table></figure>
+</li>
+<li><p>获取</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="keyword">var</span> text = element.textContent;
+</pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<p><strong>Note</strong>: textContent和innerText类似，也会同时获取子元素的text content，比如</p>
+<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>&lt;div&gt;<span class="keyword">this</span> is &lt;span&gt;a&lt;<span class="regexp">/span&gt; text!&lt;/</span>div&gt;
+<span class="comment">// div.textContent == "this is a text!"</span>
+</pre></td></tr></table></figure>
+
+
+<h2>与<code>innerText</code>的区别</h2>
+<ul>
+<li><code>textContent</code>会获取所有元素的content，包括<code>&lt;script&gt;</code>和<code>&lt;style&gt;</code>元素</li>
+<li><code>innerText</code>不会获取hidden元素的content，而<code>textContent</code>会</li>
+<li><code>innerText</code>会触发reflow，而<code>textContent</code>不会</li>
+<li><code>innerText</code>返回值会被格式化，而<code>textContent</code>不会</li>
+</ul>
+<h2>主流浏览器支持情况</h2>
+<ul>
+<li>IE 9+</li>
+<li>Chrome 1+</li>
+<li>FireFox(Gecko)</li>
+</ul>
 
       
     </div>
@@ -804,483 +1118,11 @@ console.log(obj[<span class="number">1</span>].cut(<span class="number">6</span>
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2012-08-01T18:57:06.000Z"><a href="/2012/08/02/javascript中对空string调用split返回不是空数组/">8月 2 2012</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2012/08/02/javascript中对空string调用split返回不是空数组/">Javascript中对空string调用split返回不是空数组</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>今天在工作中发现一个诡异的问题，理论上应该是没有元素的数组，长度居然是1。查了半天，原来是Javascript中的split和其他语言中不同，即对空string使用split会返回含有一个空string的数组，而不是一个空数组。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="keyword">var</span> str = <span class="string">""</span>,
-    arr = str.split(<span class="string">"_"</span>);
- 
-console.log(arr.length === <span class="number">1</span>); <span class="comment">//true</span>
-console.log(arr === []); <span class="comment">//false</span>
-console.log(arr === [<span class="string">""</span>]); <span class="comment">//true</span>
-</pre></td></tr></table></figure>
-
-
-<p>参考MDN，也有类似的说明。</p>
-<blockquote><p>Note: When the string is empty, split returns an array containing one empty string, rather than an empty array.</p>
-</blockquote>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2012-01-27T20:29:55.000Z"><a href="/2012/01/28/翻译javascript-scoping-and-hoisting/">1月 28 2012</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2012/01/28/翻译javascript-scoping-and-hoisting/">[翻译]JavaScript Scoping and Hoisting</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>原文链接：<a href="http://www.adequatelygood.com/2010/2/JavaScript-Scoping-and-Hoisting">JavaScript Scoping and Hoisting</a></p>
-<p>你知道下面的JavaScript代码执行后会alert出什么值吗？</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="keyword">var</span> foo = <span class="number">1</span>;
-<span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">()</span> {</span>
-    <span class="keyword">if</span> (!foo) {
-      <span class="keyword">var</span> foo = <span class="number">10</span>;
-    }
-    alert(foo);
-}
-bar();
-</pre></td></tr></table></figure>
-
-
-<p>如果答案是&quot;10&quot;令你感到惊讶的话，那么下面这个会让你更加困惑：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="keyword">var</span> a = <span class="number">1</span>;
-<span class="function"><span class="keyword">function</span> <span class="title">b</span><span class="params">()</span> {</span>
-    a = <span class="number">10</span>;
-    <span class="keyword">return</span>;
-    <span class="function"><span class="keyword">function</span> <span class="title">a</span><span class="params">()</span> {</span>}
-}
-b();
-alert(a);
-</pre></td></tr></table></figure>
-
-
-<p>浏览器会alert“1”。那么，到底是怎么了？尽管这看起来有点奇怪、有点危险又有点令人困惑，但这事实上却是这门语言一个强力的具有表现力的特性。我不知道是不是有个标准来定义这种行为，但是我喜欢用”hoisting”来描述。这篇文章试着去解释这种机制，但是首先，让我们对JavaScript的scoping做一些必要的了解。</p>
-<h2>Scoping in JavaScript</h2>
-<p>对于JavaScript新手来说scoping是最令人困惑的部分之一。事实上，不仅仅是新手，我遇到或很多有经验的JavaScript程序员也不能完全理解scoping。JavaScript的scoping如此复杂的原因是它看上去非常像C系语言的成员。请看下面的C程序：</p>
-<figure class="highlight lang-c"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-</pre></td><td class="code"><pre><span class="comment">#include &lt;stdio.h&gt;</span>
-<span class="keyword">int</span> main() {
-    <span class="keyword">int</span> <span class="keyword">x</span> = <span class="number">1</span>;
-    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>, "</span>, <span class="keyword">x</span>); <span class="regexp">//</span> <span class="number">1</span>
-    <span class="keyword">if</span> (<span class="number">1</span>) {
-        <span class="keyword">int</span> <span class="keyword">x</span> = <span class="number">2</span>;
-        <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>, "</span>, <span class="keyword">x</span>); <span class="regexp">//</span> <span class="number">2</span>
-    }
-    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>, <span class="keyword">x</span>); <span class="regexp">//</span> <span class="number">1</span>
-}
-</pre></td></tr></table></figure>
-
-
-<p>这段程序的输出是1,2,1。这是因为在C系语言有块级作用域(block-level scope),当进入到一个块时，就像if语句，在这个块级作用域中会声明新的变量，这些变量不会影响到外部作用域。但是JavaScript却不是这样。在Firebug中试试下面的代码：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="code"><pre><span class="keyword">var</span> x = <span class="number">1</span>;
-console.log(x); <span class="comment">// 1</span>
-<span class="keyword">if</span> (<span class="literal">true</span>) {
-    <span class="keyword">var</span> x = <span class="number">2</span>;
-    console.log(x); <span class="comment">// 2</span>
-}
-console.log(x);<span class="comment">// 2</span>
-</pre></td></tr></table></figure>
-
-
-<p>在这段代码中，Firebug显示1，2,2。这是因为JavaScript是函数级作用域(function-level scope)。这和C系语言是完全不同的。块，就像if语句，并不会创建一个新的作用域。只有函数才会创建新的作用域。</p>
-<p>对于大部分熟悉C，C++，C#或是Java的程序员来说，这是意料之外并且不被待见的。幸运的是，因为JavaScript函数的灵活性，对于这个问题我们有一个解决方案。如果你必须在函数中创建一个临时的作用域，请像下面这样做：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
-    <span class="keyword">var</span> x = <span class="number">1</span>;
-    <span class="keyword">if</span> (x) {
-        (<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">var</span> x = <span class="number">2</span>;
-            <span class="comment">// some other code</span>
-        }());
-    }
-    <span class="comment">// x is still 1.</span>
-}
-</pre></td></tr></table></figure>
-
-
-<p>这种方面确实非常灵活，它使用在任何需要创建一个临时作用域的地方，不仅仅是某个块中。但是，我强烈建议你花点时间好好理解下JavaScript scoping。它实在是非常强力，而且它也是我最喜欢的语言特性之一。如果你很好的理解了scoping，理解hoisting将会更加容易。</p>
-<h2>Declarations, Names, and Hoisting</h2>
-<p>在JavaScript中，一个作用域(scope)中的名称(name)有以下四种：
-1. 语言自身定义(Language-defined): 所有的作用域默认都会包含this和arguments。
-2. 函数形参(Formal parameters): 函数有名字的形参会进入到函数体的作用域中。
-3. 函数声明(Function decalrations): 通过function foo() {}的形式。
-4. 变量声明(Variable declarations): 通过var foo;的形式。</p>
-<p>函数声明和变量声明总是被JavaScript解释器隐式地提升(hoist)到包含他们的作用域的最顶端。很明显的，语言自身定义和函数形参已经处于作用域顶端。这就像下面的代码：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
-    bar();
-    <span class="keyword">var</span> x = <span class="number">1</span>;
-}
-</pre></td></tr></table></figure>
-
-
-<p>实际上被解释成像下面那样：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
-    <span class="keyword">var</span> x;
-    bar();
-    x = <span class="number">1</span>;
-}
-</pre></td></tr></table></figure>
-
-
-<p>结果是不管声明是否被执行都没有影响。下面的两段代码是等价的：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
-    <span class="keyword">if</span> (<span class="literal">false</span>) {
-        <span class="keyword">var</span> x = <span class="number">1</span>;
-    }
-    <span class="keyword">return</span>;
-    <span class="keyword">var</span> y = <span class="number">1</span>;
-}
-<span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
-    <span class="keyword">var</span> x, y;
-    <span class="keyword">if</span> (<span class="literal">false</span>) {
-        x = <span class="number">1</span>;
-    }
-    <span class="keyword">return</span>;
-    y = <span class="number">1</span>;
-}
-</pre></td></tr></table></figure>
-
-
-<p>注意到声明的赋值部分并没有被提升(hoist)。只有声明的名称被提升了。这和函数声明不同，函数声明中，整个函数体也都会被提升。但是请记住，声明一个函数一般来说有两种方式。考虑下面的JavaScript代码：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">()</span> {</span>
-    foo(); <span class="comment">// TypeError "foo is not a function"</span>
-    bar(); <span class="comment">// "this will run!"</span>
-    <span class="keyword">var</span> foo = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span> <span class="comment">// 函数表达式被赋值给变量'foo'</span>
-        alert(<span class="string">"this won't run!"</span>);
-    }
-    <span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">()</span> {</span> <span class="comment">// 名为'bar'的函数声明</span>
-        alert(<span class="string">"this will run!"</span>);
-    }
-}
-test();
-</pre></td></tr></table></figure>
-
-
-<p>在这里，只有函数声明的方式会连函数体一起提升，而函数表达式中只会提升名称，函数体只有在执行到赋值语句时才会被赋值。</p>
-<p>以上就包括了所有关于提升(hoisting)的基础，看起来并没有那么复杂或是令人困惑对吧。但是，这是JavaScript，在某些特殊情况下，总会有那么一点复杂。</p>
-<h2>Name Resolution Order</h2>
-<p>需要记住的最最重要的特例就是名称解析顺序(name resolution order)。记住一个名称进入一个作用域一共有四种方式。我上面列出的顺序就是他们解析的顺序。总的来说，如果一个名称已经被定义了，他绝不会被另一个拥有不用属性的同名名称覆盖。这就意味着，函数声明比变量声明具有更高的优先级。但是这却不意味着对这个名称的赋值无效，仅仅是声明的部分会被忽略而已。但是有下面几个例外：</p>
-<p>内置的名称arguments的行为有些怪异。他似乎是在形参之后，函数声明之前被声明。这就意味着名为arguments的形参会比内置的arguments具有更高的优先级，即使这个形参是undefined。这是一个不好的特性，不要使用arguments作为形参。
-任何地方试图使用this作为一个标识都会引起语法错误，这是一个好的特性。
-如果有多个同名形参，那位于列表最后的形参拥有最高的优先级，即使它是undefined。</p>
-<h2>Name Function Expressions</h2>
-<p>你可以在函数表达式中给函数定义名称，就像函数声明的语句一样。但这并不会使它成为一个函数声明，并且这个名称也不会被引入到作用域中，而且，函数体也不会被提升(hoist)。这里有一些代码可以说明我说的是什么意思：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-</pre></td><td class="code"><pre>foo(); <span class="comment">// TypeError "foo is not a function"</span>
-bar(); <span class="comment">// valid</span>
-baz(); <span class="comment">// TypeError "baz is not a function"</span>
-spam(); <span class="comment">// ReferenceError "spam is not defined"</span>
-
-<span class="keyword">var</span> foo = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>}; <span class="comment">// 匿名函数表达式('foo'被提升)</span>
-<span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">()</span> {</span>}; <span class="comment">// 函数声明('bar'和函数体被提升)</span>
-<span class="keyword">var</span> baz = <span class="function"><span class="keyword">function</span> <span class="title">spam</span><span class="params">()</span> {</span>}; <span class="comment">// 命名函数表达式(只有'baz'被提升)</span>
-
-foo(); <span class="comment">// valid</span>
-bar(); <span class="comment">// valid</span>
-baz(); <span class="comment">// valid</span>
-spam(); <span class="comment">// ReferenceError "spam is not defined"</span>
-</pre></td></tr></table></figure>
-
-
-<h2>How to Code With This Knowledge</h2>
-<p>现在你明白了作用域和提升，那么这对编写JavaScript代码意味着什么呢？最重要的一条是声明变量时总是使用var语句。我强烈的建议你在每个作用域中都只在最顶端使用一个var。如果你强制自己这么做，你永远也不会被提升相关的问题困扰。尽管这么做会使的跟踪当前作用域实际声明了哪些变量变得更加困难。我建议在JSLint使用onevar选项。如果你做了所有前面的建议，你的代码看起来会是下面这样：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="comment">/*jslint onevar: true [...] */</span>
-<span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">(a, b, c)</span> {</span>
-    <span class="keyword">var</span> x = <span class="number">1</span>,
-        bar,
-        baz = <span class="string">"something"</span>;
-}
-</pre></td></tr></table></figure>
-
-
-<p>What the Standard Says</p>
-<p>我发现直接参考ECMAScript Standard (pdf)来理解这些东西是如何运作的总是很有用。下面是关于变量声明和作用域的一段摘录(section 12.2.2)：</p>
-<blockquote><p>If the variable statement occurs inside a FunctionDeclaration, the variables are defined with function-local scope in that function, as described in section 10.1.3. Otherwise, they are defined with global scope (that is, they are created as members of the global object, as described in section 10.1.3) using property attributes { DontDelete }. Variables are created when the execution scope is entered. A Block does not define a new execution scope. Only Program and FunctionDeclaration produce a new scope. Variables are initialised to undefined when created. A variable with an Initialiser is assigned the value of its AssignmentExpression when the VariableStatement is executed, not when the variable is created.</p>
-</blockquote>
-
-
-<p>我希望这篇文章能够给JavaScript程序员最容易困惑的部分一些启示。我尽力写的全面，以免引起更多的困惑。如果我写错了或是漏掉了某些重要的东西，请一定让我知道。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2011-09-08T06:02:23.000Z"><a href="/2011/09/08/javascript中的“this”/">9月 8 2011</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2011/09/08/javascript中的“this”/">JavaScript中的&quot;this&quot;</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>JavaScript有自己的一套this机制，在不同情况下，this的指向也不尽相同。</p>
-<h2>全局范围</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>console.log(<span class="keyword">this</span>); <span class="comment">//全局变量</span>
-</pre></td></tr></table></figure>
-
-<p>全局范围使用this指向的是全局变量，浏览器环境下就是window。</p>
-<p>注：ECMAScript5的strict模式不存在全局变量，这里的this是undefined。</p>
-<h2>函数调用中</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
-    console.log(<span class="keyword">this</span>);
-}
-
-foo(); <span class="comment">//全局变量</span>
-</pre></td></tr></table></figure>
-
-<p>函数调用中的this也指向全局变量。</p>
-<p>注：ECMAScript5的strict模式不存在全局变量，这里的this是undefined。</p>
-<h2>对象方法调用</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="code"><pre><span class="keyword">var</span> test = {
-    foo: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-        console.log(<span class="keyword">this</span>);
-    }
-}
-
-test.foo(); <span class="comment">//test对象</span>
-</pre></td></tr></table></figure>
-
-<p>对象方法调用中，this指向调用者。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="keyword">var</span> test = {
-    foo: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-        console.log(<span class="keyword">this</span>);
-    }
-}
-
-<span class="keyword">var</span> test2 = test.foo;
-test2();  <span class="comment">//全局变量</span>
-</pre></td></tr></table></figure>
-
-<p>不过由于this的晚绑定特性，在上例的情况中this将指向全局变量，相当于直接调用函数。</p>
-<p>这点非常重要，同样的代码段，只有在运行时才能确定this指向</p>
-<h2>构造函数</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">Foo</span><span class="params">()</span> {</span>
-    console.log(<span class="keyword">this</span>);
-}
-
-<span class="keyword">new</span> Foo(); <span class="comment">//新创建的对象</span>
-console.log(foo); 
-</pre></td></tr></table></figure>
-
-<p>在构造函数内部，this指向新创建的对象。</p>
-<h2>显式设置this</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">(a, b)</span> {</span>
-    console.log(<span class="keyword">this</span>);
-}
-
-<span class="keyword">var</span> bar = {};
-
-foo.apply(bar, [<span class="number">1</span>, <span class="number">2</span>]); <span class="comment">//bar</span>
-foo.call(<span class="number">1</span>, <span class="number">2</span>); <span class="comment">//Number对象</span>
-</pre></td></tr></table></figure>
-
-<p>使用Function.prototype的call或者apply方法是，函数内部this会被设置为传入的第一个参数。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
 
 <nav id="pagination">
   
+  
+    <a href="/page/2/" class="alignright next">下一页</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -1299,7 +1141,7 @@ foo.call(<span class="number">1</span>, <span class="number">2</span>); <span cl
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>8</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
