@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>RequireJS学习 | 呆呆</title>
+  <title>RequireJS学习 | 笨兔子</title>
   <meta name="author" content="BetaRabbit">
   
   <meta name="description" content="RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。
@@ -25,24 +25,23 @@ sub_ap">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <meta property="og:title" content="RequireJS学习"/>
-  <meta property="og:site_name" content="呆呆"/>
+  <meta property="og:site_name" content="笨兔子"/>
 
   
     <meta property="og:image" content="undefined"/>
   
 
   <link href="/favicon.png" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">呆呆</a></h1>
+  <h1><a href="/">笨兔子</a></h1>
   <h2><a href="/"></a></h2>
 </div>
 <nav id="main-nav" class="alignright">
@@ -74,8 +73,8 @@ sub_ap">
     <div class="entry">
       
         <p>RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。</p>
-<p>最新版可以在<a href="http://requirejs.org/docs/download.html">这里</a>下载。</p>
-<h2>基本用法</h2>
+<p>最新版可以在<a href="http://requirejs.org/docs/download.html" target="_blank">这里</a>下载。</p>
+<h2 id="-">基本用法</h2>
 <p>假设你的工程目录结构如下：</p>
 <ul>
 <li>project<ul>
@@ -116,13 +115,13 @@ sub_ap">
 </li>
 </ul>
 <p>然后，在index.html中引入<code>&lt;script&gt;</code>用来加载require.js。</p>
-<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">script</span> <span class="attribute">data-main</span>=<span class="value">"js/app"</span> <span class="attribute">src</span>=<span class="value">"js/lib/require.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
 </pre></td></tr></table></figure>
 
 
 <p>在app.js中，使用<code>require</code>方法加载其他脚本</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -151,14 +150,14 @@ sub_ap">
 });
  
 <span class="comment">// app入口</span>
-require([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
+<span class="built_in">require</span>([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
     sub.hello();
 });
 </pre></td></tr></table></figure>
 
 
 <p>在sub_app.js中定义一个module</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -192,7 +191,7 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
 
 
 <p>现在，打开浏览器的控制台，应该能看到我们自定义的module成功使用jQuery输出了下面这句话：</p>
-<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre>Hello, I'm powered by jQuery 1.8.3! 
 </pre></td></tr></table></figure>
 
@@ -208,21 +207,6 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
   </div>
 
         
-<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-  <span class="bds_more">分享到：</span>
-  <a class="bds_qzone"></a>
-  <a class="bds_tsina"></a>
-  <a class="bds_tqq"></a>
-  <a class="bds_renren"></a>
-  <a class="bds_t163"></a>
-  <a class="shareCount"></a>
-</div>
-<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
-<script type="text/javascript" id="bdshell_js"></script>
-<script type="text/javascript">
-document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-</script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -232,10 +216,14 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
 
 <section id="comment">
   <h1 class="title">留言</h1>
+
+  
   <div id="disqus_thread">
     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+  
 </section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -252,7 +240,7 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
@@ -266,11 +254,12 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2013 BetaRabbit
+  &copy; 2014 BetaRabbit
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 

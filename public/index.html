@@ -3,31 +3,30 @@
 <head>
   <meta charset="utf-8">
   
-  <title>呆呆</title>
+  <title>笨兔子</title>
   <meta name="author" content="BetaRabbit">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-  <meta property="og:site_name" content="呆呆"/>
+  <meta property="og:site_name" content="笨兔子"/>
 
   
     <meta property="og:image" content="undefined"/>
   
 
   <link href="/favicon.png" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">呆呆</a></h1>
+  <h1><a href="/">笨兔子</a></h1>
   <h2><a href="/"></a></h2>
 </div>
 <nav id="main-nav" class="alignright">
@@ -49,6 +48,152 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2014-01-27T05:32:25.000Z"><a href="/2014/01/27/[翻译]-比较不同observer模式的实现/">1月 27 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/01/27/[翻译]-比较不同observer模式的实现/">[翻译] 比较不同Observer模式的实现</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>原文链接：<a href="https://github.com/millermedeiros/js-signals/wiki/Comparison-between-different-Observer-Pattern-implementations" target="_blank">Comparison between different Observer Pattern implementations</a></p>
+<p>下面的比较只是关于订阅、发布事件以及删除事件监听器的一些基本特性。主要是基于各种基本概念实现上的不同和它们使用上的优缺点，而不是可用的特性。有些被标记为缺点的部分可以通过“好的实现”或则“hack”来避免，但是通常情况下，这些缺点都是存在的。</p>
+<p>所有的实现都基于一种设计模式（<a href="http://en.wikipedia.org/wiki/Observer_pattern" target="_blank">Observer</a>）完成了相同的任务，他们虽然有很多共同点，但运行方式上却有些许不同。本文主要是为了帮助你选择哪种实现最适合你的工作流以及你要解决的问题种类。</p>
+<h2 id="event-emitter-target-dispatcher">Event Emitter/Target/Dispatcher</h2>
+<ul>
+<li>所有派发自定义事件的对象都需要继承自EventEmitter/EventTarget/EventDspatcher或者实现特定的接口。</li>
+<li>使用字符串定义事件类型。</li>
+<li>DOM2/DOM3 Events就是基于这样的模式。</li>
+</ul>
+<h3 id="-">代码示例</h3>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>  myObject.addEventListener(<span class="string">'myCustomEventTypeString'</span>, handler);
+  myObject.dispatchEvent(<span class="keyword">new</span> Event(<span class="string">'myCustomEventTypeString'</span>));
+  myObject.removeEventListener(<span class="string">'myCustomEventTypeString'</span>, handler);
+</pre></td></tr></table></figure>
+
+<h3 id="-">优点</h3>
+<ul>
+<li>对<em>target object</em>具有完全的控制，确保只监听特定target派发的事件。</li>
+<li>能够派发任意的事件类型而不用修改target object。</li>
+<li>每一种target/object/event都使用相同的方法。</li>
+<li>代码容易理解。</li>
+<li>事件的target通常都是object本身，这使得事件冒泡<em>更有逻辑性</em>。</li>
+<li>流行。</li>
+</ul>
+<h3 id="-">缺点</h3>
+<ul>
+<li>倾向于使用继承而不是组合。</li>
+<li>使用字符串定义事件类型，容易产生拼写错误并且IDE自动完成不能很好的工作。</li>
+<li>Event handler通常只接受一个参数（Event Object）。<ul>
+<li>如果想传递额外的数据，必须创建一个实现了特定接口的自定义Event对象或者扩展一个基本的Event对象，这个过程通常是繁琐不便的。</li>
+</ul>
+</li>
+</ul>
+<h2 id="publish-subscribe-pub-sub-">Publish / Subscribe <em>(pub/sub)</em></h2>
+<ul>
+<li>使用同一个对象向多个<em>订阅者**广播</em>消息。<ul>
+<li>并不是必要条件，但大多数实现都使用一个静态的集中的对象作为广播者。</li>
+</ul>
+</li>
+<li>使用字符串定义事件类型。</li>
+<li><em>消息</em>和事件的目标之间并没有关系。</li>
+</ul>
+<h3 id="-">代码示例</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>  globalBroadcaster.subscribe(<span class="string">'myCustomEventTypeString'</span>, handler);
+  globalBroadcaster.publish(<span class="string">'myCustomEventTypeString'</span>, paramsArray);
+  globalBroadcaster.unsubscribe(<span class="string">'myCustomEventTypeString'</span>, handler);
+</pre></td></tr></table></figure>
+
+<h3 id="-">优点</h3>
+<ul>
+<li>任意对象都能订阅/发布任何事件类型。</li>
+<li>轻量级。</li>
+<li>容易使用/实现。</li>
+</ul>
+<h3 id="-">缺点</h3>
+<ul>
+<li>任意对象都能订阅/发布任何事件类型（是的，这既是优点也是缺点）。</li>
+<li>使用字符串定义事件类型。<ul>
+<li>容易出错。</li>
+<li>没有自动完成（除非将value保存为变量/常量）。</li>
+<li>通过命名规范来避免<em>消息</em>被错误的订阅者拦截。</li>
+</ul>
+</li>
+</ul>
+<h2 id="signals">Signals</h2>
+<ul>
+<li>每种事件类型都有自己的<em>控制器</em>。</li>
+<li>事件类型不依赖于字符串。</li>
+</ul>
+<h3 id="-">代码示例</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>  myObject.myCustomEventType.add(handler);
+  myObject.myCustomEventType.dispatch(param1, param2, ...);
+  myObject.myCustomEventType.remove(handler);
+</pre></td></tr></table></figure>
+
+<h3 id="-">优点</h3>
+<ul>
+<li>不依赖于字符串。<ul>
+<li>自动完成能正常工作。</li>
+<li>派发或监听一个不存在的事件类型会抛出错误（能够更早的发现错误）。</li>
+<li>不需要创建常量来存储字符串值。</li>
+</ul>
+</li>
+<li>细粒度的控制每个监听器和事件类型。<ul>
+<li>每个signal都是一个特定的目标/容器。</li>
+</ul>
+</li>
+<li>容易定义对象派发的<em>signal</em>。</li>
+<li>倾向于使用组合而不是继承。<ul>
+<li>别和原型链混淆了。</li>
+</ul>
+</li>
+</ul>
+<h3 id="-">缺点</h3>
+<ul>
+<li>不能派发任意类型的事件。<em>（这在大多数情况下也是个优点）</em></li>
+<li>每个事件类型都是个对象成员。<em>（这在大多数情况下也是个优点）</em><ul>
+<li>如果有很多事件类型的话，易导致<em>命名空间混乱</em>。</li>
+</ul>
+</li>
+<li>不会将事件类型和目标对象传递给callback使得很难使用通用的handler（工作于多个事件类型和目标）。</li>
+<li>与大多数人使用的不同。</li>
+</ul>
+<h2 id="-">结论</h2>
+<p>就像生活中的大多数东西一样，每种解决方案都有它的优点和缺点。决定哪种方式最适合取决于你。我希望本文能在你做决定时帮助到你。再一次，没有解决方案是万能的。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2013-06-10T15:09:45.000Z"><a href="/2013/06/10/ie下点击scrollbar会触发input元素的blur事件/">6月 10 2013</a></time>
       
       
@@ -59,10 +204,10 @@
     </header>
     <div class="entry">
       
-        <h2>现象</h2>
+        <h2 id="-">现象</h2>
 <p>IE这货果然与众不同，当光标焦点在input时，点击同页面内其他区域的scrollbar，会导致焦点移动到body，从而触发绑定在input上的blur事件，如果input中的值与之前不同，甚至还会触发change事件...
 Chrome曾经也有类似的问题，但在最新版中已经修正了，而Firefox则完全没有这样的问题。</p>
-<h2>影响</h2>
+<h2 id="-">影响</h2>
 <p>这个问题看起来微不足道，实际上影响还是非常大的，主要表现在下面2个方面</p>
 <ul>
 <li><p>多数的suggest控件会出错
@@ -74,9 +219,9 @@ suggest往往是通过input(输入部分)和div(下拉框部分)组成。有时�
 这个更容易理解了，一般来说form的验证都是绑定在blur或者change事件上，如果form太长，需要移动滚动条才能看全的情况下，一旦鼠标点击滚动条就会错误的触发form验证操作，将无用的错误信息显示给用户。</p>
 </li>
 </ul>
-<h2>解决方案</h2>
+<h2 id="-">解决方案</h2>
 <p>我们来看看jQueryUI的Autocomplete是怎么解决这个问题的。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -119,7 +264,7 @@ suggest往往是通过input(输入部分)和div(下拉框部分)组成。有时�
 41
 42
 </pre></td><td class="code"><pre><span class="comment">// input's blur event</span>
-blur: <span class="keyword">function</span>( event ) {
+blur: <span class="function"><span class="keyword">function</span><span class="params">( event )</span> {</span>
     <span class="keyword">if</span> ( <span class="keyword">this</span>.cancelBlur ) {
         <span class="keyword">delete</span> <span class="keyword">this</span>.cancelBlur;
         <span class="keyword">return</span>;
@@ -131,14 +276,14 @@ blur: <span class="keyword">function</span>( event ) {
 }
 
 <span class="comment">// dropdown's mousedown event</span>
-mousedown: <span class="keyword">function</span>( event ) {
+mousedown: <span class="function"><span class="keyword">function</span><span class="params">( event )</span> {</span>
     <span class="comment">// prevent moving focus out of the text field</span>
     event.preventDefault();
 
     <span class="comment">// IE doesn't prevent moving focus even with event.preventDefault()</span>
     <span class="comment">// so we set a flag to know when we should ignore the blur event</span>
     <span class="keyword">this</span>.cancelBlur = <span class="literal">true</span>;
-    <span class="keyword">this</span>._delay(<span class="keyword">function</span>() {
+    <span class="keyword">this</span>._delay(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
         <span class="keyword">delete</span> <span class="keyword">this</span>.cancelBlur;
     });
 
@@ -148,9 +293,9 @@ mousedown: <span class="keyword">function</span>( event ) {
     <span class="comment">// the user clicks somewhere outside of the autocomplete</span>
     <span class="keyword">var</span> menuElement = <span class="keyword">this</span>.menu.element[ <span class="number">0</span> ];
     <span class="keyword">if</span> ( !$( event.target ).closest( <span class="string">".ui-menu-item"</span> ).length ) {
-        <span class="keyword">this</span>._delay(<span class="keyword">function</span>() {
+        <span class="keyword">this</span>._delay(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
             <span class="keyword">var</span> that = <span class="keyword">this</span>;
-            <span class="keyword">this</span>.document.one( <span class="string">"mousedown"</span>, <span class="keyword">function</span>( event ) {
+            <span class="keyword">this</span>.document.one( <span class="string">"mousedown"</span>, <span class="function"><span class="keyword">function</span><span class="params">( event )</span> {</span>
                 <span class="keyword">if</span> ( event.target !== that.element[ <span class="number">0</span> ] &amp;&amp;
                         event.target !== menuElement &amp;&amp;
                         !$.contains( menuElement, event.target ) ) {
@@ -183,60 +328,61 @@ mousedown: <span class="keyword">function</span>( event ) {
 
 
 
+
   <article class="post">
   
   <div class="post-content">
     <header>
       
         <div class="icon"></div>
-        <time datetime="2013-05-30T16:43:11.000Z"><a href="/2013/05/31/理解underscore和lo-dash-collections-_each/">5月 31 2013</a></time>
+        <time datetime="2013-05-30T16:43:11.000Z"><a href="/2013/05/31/[理解underscore和lo-dash] collections-_each/">5月 31 2013</a></time>
       
       
   
-    <h1 class="title"><a href="/2013/05/31/理解underscore和lo-dash-collections-_each/">[理解Underscore和Lo-Dash] Collections _.each</a></h1>
+    <h1 class="title"><a href="/2013/05/31/[理解underscore和lo-dash] collections-_each/">[理解Underscore和Lo-Dash] Collections _.each</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <h1>_.each</h1>
+        <h1 id="_-each">_.each</h1>
 <p>遍历集合，对集合中的每个元素执行回调。</p>
-<h1>API</h1>
-<h2>Lo-Dash</h2>
+<h1 id="api">API</h1>
+<h2 id="lo-dash">Lo-Dash</h2>
 <p>_.forEach(collection [, callback=identity, thisArg])</p>
-<h3>Aliases</h3>
+<h3 id="aliases">Aliases</h3>
 <p><em>each</em></p>
-<h3>Arguments</h3>
+<h3 id="arguments">Arguments</h3>
 <ol>
 <li><code>collection</code> <em>(Array|Object|String)</em>: 要遍历的集合</li>
 <li><code>[callback=identity]</code> <em>(Function)</em>: 每次迭代中调用的函数</li>
 <li><code>[thisArg]</code> <em>(任意)</em>: 绑定到<code>callback</code>的<code>this</code></li>
 <li><code>callback</code>接受三个参数: <code>(value, index|key, collection)</code></li>
 </ol>
-<h3>Returns</h3>
+<h3 id="returns">Returns</h3>
 <p><em>(Array, Object, String)</em>: 返回<code>collection</code>.</p>
-<h2>Underscore</h2>
+<h2 id="underscore">Underscore</h2>
 <p>_.each(list, iterator, [context])</p>
-<h3>Aliases</h3>
+<h3 id="aliases">Aliases</h3>
 <p><em>forEach</em></p>
-<h3>Arguments</h3>
+<h3 id="arguments">Arguments</h3>
 <ol>
 <li><code>list</code> <em>(Array|Object|String)</em>: 要遍历的集合</li>
 <li><code>iterator</code> <em>(Function)</em>: 每次迭代中调用的函数</li>
 <li><code>[context]</code> <em>(任意)</em>: 绑定到<code>callback</code>的<code>this</code></li>
 <li><code>iterator</code>接受三个参数: <code>(element|value, index|key, list)</code></li>
 </ol>
-<h3>Returns</h3>
+<h3 id="returns">Returns</h3>
 <p><em>(Array, Object, String)</em>: 返回<code>undefined</code>.</p>
-<h2>Note</h2>
+<h2 id="note">Note</h2>
 <ul>
 <li>Lo-Dash可以省略回调函数，而Underscore则必须传入</li>
 <li>Lo-Dash可以通过在回调中返回<code>false</code>提前结束迭代</li>
 <li>Lo-Dash会返回Collection从而允许链式操作，Underscore的返回值则是undefined</li>
 </ul>
-<h1>Example</h1>
-<h2>Lo-Dash</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h1 id="example">Example</h1>
+<h2 id="lo-dash">Lo-Dash</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -255,8 +401,8 @@ _.forEach({ <span class="string">'one'</span>: <span class="number">1</span>, <s
 </pre></td></tr></table></figure>
 
 
-<h2>Underscore</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="underscore">Underscore</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -267,9 +413,9 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 
-<h1>Source</h1>
-<h2>Lo-Dash</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h1 id="source">Source</h1>
+<h2 id="lo-dash">Lo-Dash</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -304,8 +450,8 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 
-<h2>Underscore</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="underscore">Underscore</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -321,7 +467,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 14
 15
 16
-</pre></td><td class="code"><pre><span class="keyword">var</span> each = _.each = _.forEach = <span class="keyword">function</span>(obj, iterator, context) {
+</pre></td><td class="code"><pre><span class="keyword">var</span> each = _.each = _.forEach = <span class="function"><span class="keyword">function</span><span class="params">(obj, iterator, context)</span> {</span>
     <span class="keyword">if</span> (obj == <span class="literal">null</span>) <span class="keyword">return</span>;
     <span class="keyword">if</span> (nativeForEach &amp;&amp; obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
@@ -340,7 +486,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 
-<h1>Additional</h1>
+<h1 id="additional">Additional</h1>
 <ul>
 <li><code>obj.length === +obj.length</code></li>
 </ul>
@@ -364,6 +510,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
     </footer>
   </div>
 </article>
+
 
 
 
@@ -394,17 +541,17 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 <li>ZERO-FILL RIGHT SHIFT ( <code>&gt;&gt;&gt;</code> )</li>
 </ul>
 <p>一般来说，我们在Javascript中很少能用到这些位操作符，但在某些特殊情况下，这些简单的操作符却能抵得上好几行代码（如果不在乎可读性的话）。</p>
-<h2>-(n+1)</h2>
+<h2 id="-n-1-">-(n+1)</h2>
 <p>对一个数进行<code>~</code>运算，等同于<code>-(n+1)</code></p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre>~<span class="number">1</span> === -<span class="number">2</span> <span class="comment">// =&gt; true</span>
 </pre></td></tr></table></figure>
 
 
 <p><strong>Note</strong>: 这只能应用于整数部分，<code>~1.1 === -2</code></p>
 <p>这在实际使用中常常配合<code>indexOf</code>一起使用，<code>if (~array.indexOf(string))</code>等同于<code>if (array中没有string)</code></p>
-<h2>取整(忽略小数部分)</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="-">取整(忽略小数部分)</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 </pre></td><td class="code"><pre>~~<span class="number">1.1</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
 <span class="number">1.1</span> ^ <span class="number">0</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
@@ -412,7 +559,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 
 
 <p>这两个在某些JS库或游戏编程中经常使用。</p>
-<h2>总结</h2>
+<h2 id="-">总结</h2>
 <p>总的来说，位操作符毕竟可读性不太好，列出来只是为了以后遇到这样的代码能看的懂，实际项目中还是不要玩这些花的东西比较好。</p>
 
       
@@ -426,6 +573,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
     </footer>
   </div>
 </article>
+
 
 
 
@@ -446,7 +594,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
     <div class="entry">
       
         <p>开发中我们经常需要将一个String和多个String值进行比较。直觉反应是使用<code>||</code>符号连接多个<code>===</code>完成，比如：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 </pre></td><td class="code"><pre><span class="keyword">if</span> (string === <span class="string">'banana'</span> || string === <span class="string">'pineapple'</span>) {
@@ -455,7 +603,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 <p>这样能够很好的完成需求，但总觉得有点笨，并且对扩展不友好，当我们的水果种类变多时：</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 </pre></td><td class="code"><pre><span class="keyword">if</span> (string === <span class="string">'banana'</span> || string === <span class="string">'pineapple'</span> || string === <span class="string">'mongo'</span> || string === <span class="string">'lemon'</span>) {
@@ -464,8 +612,8 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 <p>上面的代码看起来就不那么好看了，让我们看看有什么其他方式能够处理这种需求。</p>
-<h2>Switch</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="switch">Switch</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -482,8 +630,8 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 <p>这看起来不错，但是总是要多打些字，对于不喜欢多打字的人来说不是个好方法。</p>
-<h2>Array</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="array">Array</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 </pre></td><td class="code"><pre><span class="keyword">if</span> ([<span class="string">'banana'</span>, <span class="string">'pineapple'</span>, <span class="string">'mongo'</span>, <span class="string">'lemon'</span>].indexOf(string) &gt;= <span class="number">0</span>) {
@@ -492,9 +640,9 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 <p>这下好多了，但还有个问题，IE9以下的IE浏览器并不支持<code>indexOf</code>方法，如果你要在IE&lt;=8的环境中使用Array方式比较多个string值，要么自己写一个<code>indexOf</code>方法，要么就得引入一些库来做浏览器兼容。</p>
-<h2>jQuery</h2>
+<h2 id="jquery">jQuery</h2>
 <p>jQuery提供了一个<code>inArray</code>方法</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 </pre></td><td class="code"><pre><span class="keyword">if</span> ($.inArray([<span class="string">'banana'</span>, <span class="string">'pineapple'</span>, <span class="string">'mongo'</span>, <span class="string">'lemon'</span>], string) &gt;= <span class="number">0</span>) {
@@ -503,9 +651,9 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 
-<h2>Underscore</h2>
+<h2 id="underscore">Underscore</h2>
 <p>Underscore提供了一个<code>contains</code>方法</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 </pre></td><td class="code"><pre><span class="keyword">if</span> (_.contains([<span class="string">'banana'</span>, <span class="string">'pineapple'</span>, <span class="string">'mongo'</span>, <span class="string">'lemon'</span>], string)) {
@@ -514,15 +662,16 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 
-<h2>正则表达式</h2>
+<h2 id="-">正则表达式</h2>
 <p>当然，我们还有终极武器——正则表达式</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 </pre></td><td class="code"><pre><span class="keyword">if</span> (<span class="regexp">/^(banana|pineapple|mongo|lemon)$/</span>.test(string)) {
     fruitColor = <span class="string">'yellow'</span>;
 }
 </pre></td></tr></table></figure>
+
 
       
     </div>
@@ -538,25 +687,26 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 
 
 
+
   <article class="post">
   
   <div class="post-content">
     <header>
       
         <div class="icon"></div>
-        <time datetime="2013-03-18T16:23:47.000Z"><a href="/2013/03/19/javascript-throttle--debounce/">3月 19 2013</a></time>
+        <time datetime="2013-03-18T16:23:47.000Z"><a href="/2013/03/19/javascript-throttle-&-debounce/">3月 19 2013</a></time>
       
       
   
-    <h1 class="title"><a href="/2013/03/19/javascript-throttle--debounce/">JavaScript Throttle &amp; Debounce</a></h1>
+    <h1 class="title"><a href="/2013/03/19/javascript-throttle-&-debounce/">JavaScript Throttle &amp; Debounce</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <h2>Throttle</h2>
+        <h2 id="throttle">Throttle</h2>
 <p>无视一定时间内所有的调用，适合在发生频度比较高的，处理比较重的时候使用。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -575,29 +725,29 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 17
 18
 </pre></td><td class="code"><pre><span class="keyword">var</span> throttle = <span class="function"><span class="keyword">function</span> <span class="params">(func, threshold, alt)</span> {</span>
-    <span class="keyword">var</span> last = Date.now();
+    <span class="keyword">var</span> last = <span class="built_in">Date</span>.now();
     threshold = threshold || <span class="number">100</span>;
 
     <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-        <span class="keyword">var</span> now = Date.now();
+        <span class="keyword">var</span> now = <span class="built_in">Date</span>.now();
 
         <span class="keyword">if</span> (now - last &lt; threshold) {
             <span class="keyword">if</span> (alt) {
-                alt.apply(<span class="keyword">this</span>, arguments);
+                alt.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);
             }
             <span class="keyword">return</span>;
         }
 
         last = now;
-        func.apply(<span class="keyword">this</span>, arguments);
+        func.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);
     };
 };
 </pre></td></tr></table></figure>
 
 
-<h2>Debounce</h2>
+<h2 id="debounce">Debounce</h2>
 <p>一定间隔内没有调用时，才开始执行被调用方法</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -626,7 +776,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 
     <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
         <span class="keyword">var</span> self = <span class="keyword">this</span>;
-        <span class="keyword">var</span> args = arguments;
+        <span class="keyword">var</span> args = <span class="built_in">arguments</span>;
         <span class="keyword">var</span> delayed = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
             <span class="keyword">if</span> (!execASAP) {
                 func.apply(self, args);
@@ -646,8 +796,8 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 </pre></td></tr></table></figure>
 
 
-<h2>Test</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="test">Test</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -671,10 +821,10 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
 22
 </pre></td><td class="code"><pre><span class="keyword">var</span> test = <span class="function"><span class="keyword">function</span> <span class="params">(wrapper, threshold)</span> {</span>
     <span class="keyword">var</span> log = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-        console.log(Date.now() - start);
+        console.log(<span class="built_in">Date</span>.now() - start);
     };
     <span class="keyword">var</span> wrapperedFunc = wrapper(log, threshold);
-    <span class="keyword">var</span> start = Date.now();
+    <span class="keyword">var</span> start = <span class="built_in">Date</span>.now();
     <span class="keyword">var</span> arr = [];
 
     <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) {
@@ -682,7 +832,7 @@ _.each({one : <span class="number">1</span>, two : <span class="number">2</span>
     }
 
     <span class="keyword">while</span>(i &gt; <span class="number">0</span>) {
-        <span class="keyword">var</span> random = Math.random() * <span class="number">1000</span>;
+        <span class="keyword">var</span> random = <span class="built_in">Math</span>.random() * <span class="number">1000</span>;
         console.log(<span class="string">'index: '</span> + i);
         console.log(<span class="string">'random: '</span> + random);
         setTimeout(arr[--i], random);
@@ -707,6 +857,7 @@ test(throttle, <span class="number">1000</span>);
 
 
 
+
   <article class="post">
   
   <div class="post-content">
@@ -724,15 +875,15 @@ test(throttle, <span class="number">1000</span>);
     <div class="entry">
       
         <p>今天在使用<code>innerText</code>时遇到一个兼容性问题，FireFox不支持<code>innerText</code>方法，查了MDN，发现FireFox下有个类似的方法，叫<code>textContent</code>，它和IE的<code>innerText</code>类似， 都是用来获取（设置）元素中text的方法。</p>
-<h2>语法</h2>
+<h2 id="-">语法</h2>
 <ul>
 <li><p>设置</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre>element.textContent = “text”;
 </pre></td></tr></table></figure>
 </li>
 <li><p>获取</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre><span class="keyword">var</span> text = element.textContent;
 </pre></td></tr></table></figure>
 
@@ -740,21 +891,21 @@ test(throttle, <span class="number">1000</span>);
 </li>
 </ul>
 <p><strong>Note</strong>: textContent和innerText类似，也会同时获取子元素的text content，比如</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 </pre></td><td class="code"><pre>&lt;div&gt;<span class="keyword">this</span> is &lt;span&gt;a&lt;<span class="regexp">/span&gt; text!&lt;/</span>div&gt;
 <span class="comment">// div.textContent == "this is a text!"</span>
 </pre></td></tr></table></figure>
 
 
-<h2>与<code>innerText</code>的区别</h2>
+<h2 id="-innertext-">与<code>innerText</code>的区别</h2>
 <ul>
 <li><code>textContent</code>会获取所有元素的content，包括<code>&lt;script&gt;</code>和<code>&lt;style&gt;</code>元素</li>
 <li><code>innerText</code>不会获取hidden元素的content，而<code>textContent</code>会</li>
 <li><code>innerText</code>会触发reflow，而<code>textContent</code>不会</li>
 <li><code>innerText</code>返回值会被格式化，而<code>textContent</code>不会</li>
 </ul>
-<h2>主流浏览器支持情况</h2>
+<h2 id="-">主流浏览器支持情况</h2>
 <ul>
 <li>IE 9+</li>
 <li>Chrome 1+</li>
@@ -772,6 +923,7 @@ test(throttle, <span class="number">1000</span>);
     </footer>
   </div>
 </article>
+
 
 
 
@@ -793,7 +945,7 @@ test(throttle, <span class="number">1000</span>);
       
         <p>Windows环境下，Rails安装Bootstrap总会失败，提示therubyracer无法安装。</p>
 <p>这是因为Bootstrap使用的less文件依赖therubyracer实时执行js将less转换成css，而therubyracer这个gem并没有对应的Windows版本。</p>
-<p><a href="https://github.com/hiranpeiris">Hiran Peiris</a>在github上提供了提供了<a href="https://github.com/hiranpeiris/therubyracer_for_windows">解决方案</a>，他编译了所有的dll和gem。这下，我们终于可以在Windows下用Bootstrap啦。</p>
+<p><a href="https://github.com/hiranpeiris" target="_blank">Hiran Peiris</a>在github上提供了提供了<a href="https://github.com/hiranpeiris/therubyracer_for_windows" target="_blank">解决方案</a>，他编译了所有的dll和gem。这下，我们终于可以在Windows下用Bootstrap啦。</p>
 
       
     </div>
@@ -806,6 +958,7 @@ test(throttle, <span class="number">1000</span>);
     </footer>
   </div>
 </article>
+
 
 
 
@@ -826,8 +979,8 @@ test(throttle, <span class="number">1000</span>);
     <div class="entry">
       
         <p>RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。</p>
-<p>最新版可以在<a href="http://requirejs.org/docs/download.html">这里</a>下载。</p>
-<h2>基本用法</h2>
+<p>最新版可以在<a href="http://requirejs.org/docs/download.html" target="_blank">这里</a>下载。</p>
+<h2 id="-">基本用法</h2>
 <p>假设你的工程目录结构如下：</p>
 <ul>
 <li>project<ul>
@@ -868,13 +1021,13 @@ test(throttle, <span class="number">1000</span>);
 </li>
 </ul>
 <p>然后，在index.html中引入<code>&lt;script&gt;</code>用来加载require.js。</p>
-<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">script</span> <span class="attribute">data-main</span>=<span class="value">"js/app"</span> <span class="attribute">src</span>=<span class="value">"js/lib/require.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
 </pre></td></tr></table></figure>
 
 
 <p>在app.js中，使用<code>require</code>方法加载其他脚本</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -903,14 +1056,14 @@ test(throttle, <span class="number">1000</span>);
 });
  
 <span class="comment">// app入口</span>
-require([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
+<span class="built_in">require</span>([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
     sub.hello();
 });
 </pre></td></tr></table></figure>
 
 
 <p>在sub_app.js中定义一个module</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -944,7 +1097,7 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
 
 
 <p>现在，打开浏览器的控制台，应该能看到我们自定义的module成功使用jQuery输出了下面这句话：</p>
-<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre>Hello, I'm powered by jQuery 1.8.3! 
 </pre></td></tr></table></figure>
 
@@ -959,6 +1112,7 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
     </footer>
   </div>
 </article>
+
 
 
 
@@ -979,7 +1133,7 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
     <div class="entry">
       
         <p>今天，下面这段程序让我纠结了很久，Ruby中private的概念真的很奇怪。。。</p>
-<figure class="highlight lang-ruby"><table><tr><td class="gutter"><pre>1
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -994,13 +1148,13 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
 13
 14
 </pre></td><td class="code"><pre><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="title">private</span></span>
-  <span class="function"><span class="keyword">def</span> <span class="title">test_print</span></span>
+  <span class="function"><span class="keyword">def</span> </span>test_print
     puts <span class="string">'test'</span>
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
 <span class="class"><span class="keyword">class</span> <span class="title">Test2</span> <span class="inheritance">&lt; <span class="parent">Test</span></span></span>
-  <span class="function"><span class="keyword">def</span> <span class="title">test_print2</span></span>
+  <span class="function"><span class="keyword">def</span> </span>test_print2
     <span class="comment"># self.test_print #=&gt; 这里加上self就不能调用，private method `test_print' called for # (NoMethodError)</span>
     test_print <span class="comment">#=&gt; 不加self就能调用</span>
   <span class="keyword">end</span>
@@ -1034,89 +1188,6 @@ define([<span class="string">'jquery'</span>], <span class="function"><span clas
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2012-11-03T16:26:45.000Z"><a href="/2012/11/04/string-primitive和string-object/">11月 4 2012</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2012/11/04/string-primitive和string-object/">String Primitive和String Object</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>网上看到下面这段代码，很有意思。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="code"><pre>String.prototype.cut = <span class="function"><span class="keyword">function</span> <span class="params">(len)</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.length &gt; len ? <span class="keyword">this</span>.substring(<span class="number">0</span>, len) + <span class="string">'...'</span> : <span class="keyword">this</span>;
-};
-
-<span class="keyword">var</span> obj = [<span class="string">"Superman"</span>, <span class="string">"Batman"</span>, <span class="string">"Iron Man"</span>];
-console.log(<span class="keyword">typeof</span> obj[<span class="number">1</span>].cut(<span class="number">6</span>));
-console.log(obj[<span class="number">1</span>].cut(<span class="number">6</span>));
-</pre></td></tr></table></figure>
-
-
-<p>这段代码很简单，判断字符串的长度，如果大于给定长度（L）输出，输出字符串前L位加上“…”，否则输出字符串本身。</p>
-<p>那么，上面的代码是不是和我们期待的一样输出下面的内容呢?</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="string">"String"</span>
-<span class="string">"Batman"</span>
-</pre></td></tr></table></figure>
-
-
-<p>答案是否定的，实际的输出其实是:</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="string">"object"</span>
-&lt;String Object&gt;
-</pre></td></tr></table></figure>
-
-
-<p>这其实是因为String对象(String Object)和String基本类型(String Primitive)的不同导致的。字符串在JavaScript中有两种存在形式:</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="keyword">new</span> String(<span class="string">'object'</span>);<span class="comment">// String Object</span>
-<span class="string">'primitive'</span>;<span class="comment">// String Primitive</span>
-</pre></td></tr></table></figure>
-
-
-<p>String的所有实用方法其实都是在String对象的prototype上，String基本类型是没有这些方法的。</p>
-<p>因此当执行<code>&#39;primitive&#39;.slice(0)</code>时，JavaScript会自动将基本类型包装成对应的对象，调用对象上的方法，完成之后自动将对象销毁。因此，最上面的cut函数中this其实已经不是String Primitive而是String Object，当我们直接返回<code>this</code>时，返回值其实是”Batman”的String Object，所以<code>typeof</code>返回<code>object</code>。</p>
-<p>所以，这个cut函数正确写法应该用String转换函数将Object转为Primitive。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre>String.prototype.cut = <span class="function"><span class="keyword">function</span> <span class="params">(len)</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.length &gt; len ? <span class="keyword">this</span>.substring(<span class="number">0</span>, len) + <span class="string">'...'</span> : String(<span class="keyword">this</span>);
-};
-</pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
 
 
 <nav id="pagination">
@@ -1141,7 +1212,7 @@ console.log(obj[<span class="number">1</span>].cut(<span class="number">6</span>
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
@@ -1155,11 +1226,12 @@ console.log(obj[<span class="number">1</span>].cut(<span class="number">6</span>
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2013 BetaRabbit
+  &copy; 2014 BetaRabbit
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JavaScript Throttle &amp; Debounce | 呆呆</title>
+  <title>JavaScript Throttle &amp; Debounce | 笨兔子</title>
   <meta name="author" content="BetaRabbit">
   
   <meta name="description" content="Throttle
@@ -33,24 +33,23 @@ var throttle = function (func, threshold, alt) {
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <meta property="og:title" content="JavaScript Throttle &amp; Debounce"/>
-  <meta property="og:site_name" content="呆呆"/>
+  <meta property="og:site_name" content="笨兔子"/>
 
   
     <meta property="og:image" content="undefined"/>
   
 
   <link href="/favicon.png" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">呆呆</a></h1>
+  <h1><a href="/">笨兔子</a></h1>
   <h2><a href="/"></a></h2>
 </div>
 <nav id="main-nav" class="alignright">
@@ -71,7 +70,7 @@ var throttle = function (func, threshold, alt) {
     <header>
       
         <div class="icon"></div>
-        <time datetime="2013-03-18T16:23:47.000Z"><a href="/2013/03/19/javascript-throttle--debounce/">3月 19 2013</a></time>
+        <time datetime="2013-03-18T16:23:47.000Z"><a href="/2013/03/19/javascript-throttle-&-debounce/">3月 19 2013</a></time>
       
       
   
@@ -81,9 +80,9 @@ var throttle = function (func, threshold, alt) {
     </header>
     <div class="entry">
       
-        <h2>Throttle</h2>
+        <h2 id="throttle">Throttle</h2>
 <p>无视一定时间内所有的调用，适合在发生频度比较高的，处理比较重的时候使用。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -102,29 +101,29 @@ var throttle = function (func, threshold, alt) {
 17
 18
 </pre></td><td class="code"><pre><span class="keyword">var</span> throttle = <span class="function"><span class="keyword">function</span> <span class="params">(func, threshold, alt)</span> {</span>
-    <span class="keyword">var</span> last = Date.now();
+    <span class="keyword">var</span> last = <span class="built_in">Date</span>.now();
     threshold = threshold || <span class="number">100</span>;
 
     <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-        <span class="keyword">var</span> now = Date.now();
+        <span class="keyword">var</span> now = <span class="built_in">Date</span>.now();
 
         <span class="keyword">if</span> (now - last &lt; threshold) {
             <span class="keyword">if</span> (alt) {
-                alt.apply(<span class="keyword">this</span>, arguments);
+                alt.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);
             }
             <span class="keyword">return</span>;
         }
 
         last = now;
-        func.apply(<span class="keyword">this</span>, arguments);
+        func.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);
     };
 };
 </pre></td></tr></table></figure>
 
 
-<h2>Debounce</h2>
+<h2 id="debounce">Debounce</h2>
 <p>一定间隔内没有调用时，才开始执行被调用方法</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -153,7 +152,7 @@ var throttle = function (func, threshold, alt) {
 
     <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
         <span class="keyword">var</span> self = <span class="keyword">this</span>;
-        <span class="keyword">var</span> args = arguments;
+        <span class="keyword">var</span> args = <span class="built_in">arguments</span>;
         <span class="keyword">var</span> delayed = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
             <span class="keyword">if</span> (!execASAP) {
                 func.apply(self, args);
@@ -173,8 +172,8 @@ var throttle = function (func, threshold, alt) {
 </pre></td></tr></table></figure>
 
 
-<h2>Test</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="test">Test</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -198,10 +197,10 @@ var throttle = function (func, threshold, alt) {
 22
 </pre></td><td class="code"><pre><span class="keyword">var</span> test = <span class="function"><span class="keyword">function</span> <span class="params">(wrapper, threshold)</span> {</span>
     <span class="keyword">var</span> log = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-        console.log(Date.now() - start);
+        console.log(<span class="built_in">Date</span>.now() - start);
     };
     <span class="keyword">var</span> wrapperedFunc = wrapper(log, threshold);
-    <span class="keyword">var</span> start = Date.now();
+    <span class="keyword">var</span> start = <span class="built_in">Date</span>.now();
     <span class="keyword">var</span> arr = [];
 
     <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) {
@@ -209,7 +208,7 @@ var throttle = function (func, threshold, alt) {
     }
 
     <span class="keyword">while</span>(i &gt; <span class="number">0</span>) {
-        <span class="keyword">var</span> random = Math.random() * <span class="number">1000</span>;
+        <span class="keyword">var</span> random = <span class="built_in">Math</span>.random() * <span class="number">1000</span>;
         console.log(<span class="string">'index: '</span> + i);
         console.log(<span class="string">'random: '</span> + random);
         setTimeout(arr[--i], random);
@@ -232,21 +231,6 @@ test(throttle, <span class="number">1000</span>);
   </div>
 
         
-<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-  <span class="bds_more">分享到：</span>
-  <a class="bds_qzone"></a>
-  <a class="bds_tsina"></a>
-  <a class="bds_tqq"></a>
-  <a class="bds_renren"></a>
-  <a class="bds_t163"></a>
-  <a class="shareCount"></a>
-</div>
-<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
-<script type="text/javascript" id="bdshell_js"></script>
-<script type="text/javascript">
-document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-</script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -256,10 +240,14 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
 
 <section id="comment">
   <h1 class="title">留言</h1>
+
+  
   <div id="disqus_thread">
     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+  
 </section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -276,7 +264,7 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
@@ -290,11 +278,12 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2013 BetaRabbit
+  &copy; 2014 BetaRabbit
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 

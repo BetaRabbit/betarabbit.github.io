@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JavaScript中的&quot;this&quot; | 呆呆</title>
+  <title>JavaScript中的&quot;this&quot; | 笨兔子</title>
   <meta name="author" content="BetaRabbit">
   
   <meta name="description" content="JavaScript有自己的一套this机制，在不同情况下，this的指向也不尽相同。
@@ -19,24 +19,23 @@ console.log(this); //全局变量
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <meta property="og:title" content="JavaScript中的&quot;this&quot;"/>
-  <meta property="og:site_name" content="呆呆"/>
+  <meta property="og:site_name" content="笨兔子"/>
 
   
     <meta property="og:image" content="undefined"/>
   
 
   <link href="/favicon.png" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">呆呆</a></h1>
+  <h1><a href="/">笨兔子</a></h1>
   <h2><a href="/"></a></h2>
 </div>
 <nav id="main-nav" class="alignright">
@@ -68,15 +67,15 @@ console.log(this); //全局变量
     <div class="entry">
       
         <p>JavaScript有自己的一套this机制，在不同情况下，this的指向也不尽相同。</p>
-<h2>全局范围</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="-">全局范围</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 </pre></td><td class="code"><pre>console.log(<span class="keyword">this</span>); <span class="comment">//全局变量</span>
 </pre></td></tr></table></figure>
 
 <p>全局范围使用this指向的是全局变量，浏览器环境下就是window。</p>
 <p>注：ECMAScript5的strict模式不存在全局变量，这里的this是undefined。</p>
-<h2>函数调用中</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="-">函数调用中</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -90,8 +89,8 @@ foo(); <span class="comment">//全局变量</span>
 
 <p>函数调用中的this也指向全局变量。</p>
 <p>注：ECMAScript5的strict模式不存在全局变量，这里的this是undefined。</p>
-<h2>对象方法调用</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="-">对象方法调用</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -108,7 +107,7 @@ test.foo(); <span class="comment">//test对象</span>
 </pre></td></tr></table></figure>
 
 <p>对象方法调用中，this指向调用者。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -128,8 +127,8 @@ test2();  <span class="comment">//全局变量</span>
 
 <p>不过由于this的晚绑定特性，在上例的情况中this将指向全局变量，相当于直接调用函数。</p>
 <p>这点非常重要，同样的代码段，只有在运行时才能确定this指向</p>
-<h2>构造函数</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="-">构造函数</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -144,8 +143,8 @@ console.log(foo);
 </pre></td></tr></table></figure>
 
 <p>在构造函数内部，this指向新创建的对象。</p>
-<h2>显式设置this</h2>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<h2 id="-this">显式设置this</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -177,21 +176,6 @@ foo.call(<span class="number">1</span>, <span class="number">2</span>); <span cl
   </div>
 
         
-<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-  <span class="bds_more">分享到：</span>
-  <a class="bds_qzone"></a>
-  <a class="bds_tsina"></a>
-  <a class="bds_tqq"></a>
-  <a class="bds_renren"></a>
-  <a class="bds_t163"></a>
-  <a class="shareCount"></a>
-</div>
-<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
-<script type="text/javascript" id="bdshell_js"></script>
-<script type="text/javascript">
-document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-</script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -201,10 +185,14 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
 
 <section id="comment">
   <h1 class="title">留言</h1>
+
+  
   <div id="disqus_thread">
     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+  
 </section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -221,7 +209,7 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
@@ -235,11 +223,12 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2013 BetaRabbit
+  &copy; 2014 BetaRabbit
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 

@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[翻译] 比较不同Observer模式的实现 | 笨兔子</title>
+  <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="原文链接：Comparison between different Observer Pattern implementations
+下面的比较只是关于订阅、发布事件以及删除事件监听器的一些基本特性。主要是基于各种基本概念实现上的不同和它们使用上的优缺点，而不是可用的特性。有些被标记为缺点的部分可以">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="[翻译] 比较不同Observer模式的实现"/>
+  <meta property="og:site_name" content="笨兔子"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">笨兔子</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-01-27T05:32:25.000Z"><a href="/2014/01/27/[翻译]-比较不同observer模式的实现/">1月 27 2014</a></time>
+      
+      
+  
+    <h1 class="title">[翻译] 比较不同Observer模式的实现</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>原文链接：<a href="https://github.com/millermedeiros/js-signals/wiki/Comparison-between-different-Observer-Pattern-implementations" target="_blank">Comparison between different Observer Pattern implementations</a></p>
+<p>下面的比较只是关于订阅、发布事件以及删除事件监听器的一些基本特性。主要是基于各种基本概念实现上的不同和它们使用上的优缺点，而不是可用的特性。有些被标记为缺点的部分可以通过“好的实现”或则“hack”来避免，但是通常情况下，这些缺点都是存在的。</p>
+<p>所有的实现都基于一种设计模式（<a href="http://en.wikipedia.org/wiki/Observer_pattern" target="_blank">Observer</a>）完成了相同的任务，他们虽然有很多共同点，但运行方式上却有些许不同。本文主要是为了帮助你选择哪种实现最适合你的工作流以及你要解决的问题种类。</p>
+<h2 id="event-emitter-target-dispatcher">Event Emitter/Target/Dispatcher</h2>
+<ul>
+<li>所有派发自定义事件的对象都需要继承自EventEmitter/EventTarget/EventDspatcher或者实现特定的接口。</li>
+<li>使用字符串定义事件类型。</li>
+<li>DOM2/DOM3 Events就是基于这样的模式。</li>
+</ul>
+<h3 id="-">代码示例</h3>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>  myObject.addEventListener(<span class="string">'myCustomEventTypeString'</span>, handler);
+  myObject.dispatchEvent(<span class="keyword">new</span> Event(<span class="string">'myCustomEventTypeString'</span>));
+  myObject.removeEventListener(<span class="string">'myCustomEventTypeString'</span>, handler);
+</pre></td></tr></table></figure>
+
+<h3 id="-">优点</h3>
+<ul>
+<li>对<em>target object</em>具有完全的控制，确保只监听特定target派发的事件。</li>
+<li>能够派发任意的事件类型而不用修改target object。</li>
+<li>每一种target/object/event都使用相同的方法。</li>
+<li>代码容易理解。</li>
+<li>事件的target通常都是object本身，这使得事件冒泡<em>更有逻辑性</em>。</li>
+<li>流行。</li>
+</ul>
+<h3 id="-">缺点</h3>
+<ul>
+<li>倾向于使用继承而不是组合。</li>
+<li>使用字符串定义事件类型，容易产生拼写错误并且IDE自动完成不能很好的工作。</li>
+<li>Event handler通常只接受一个参数（Event Object）。<ul>
+<li>如果想传递额外的数据，必须创建一个实现了特定接口的自定义Event对象或者扩展一个基本的Event对象，这个过程通常是繁琐不便的。</li>
+</ul>
+</li>
+</ul>
+<h2 id="publish-subscribe-pub-sub-">Publish / Subscribe <em>(pub/sub)</em></h2>
+<ul>
+<li>使用同一个对象向多个<em>订阅者**广播</em>消息。<ul>
+<li>并不是必要条件，但大多数实现都使用一个静态的集中的对象作为广播者。</li>
+</ul>
+</li>
+<li>使用字符串定义事件类型。</li>
+<li><em>消息</em>和事件的目标之间并没有关系。</li>
+</ul>
+<h3 id="-">代码示例</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>  globalBroadcaster.subscribe(<span class="string">'myCustomEventTypeString'</span>, handler);
+  globalBroadcaster.publish(<span class="string">'myCustomEventTypeString'</span>, paramsArray);
+  globalBroadcaster.unsubscribe(<span class="string">'myCustomEventTypeString'</span>, handler);
+</pre></td></tr></table></figure>
+
+<h3 id="-">优点</h3>
+<ul>
+<li>任意对象都能订阅/发布任何事件类型。</li>
+<li>轻量级。</li>
+<li>容易使用/实现。</li>
+</ul>
+<h3 id="-">缺点</h3>
+<ul>
+<li>任意对象都能订阅/发布任何事件类型（是的，这既是优点也是缺点）。</li>
+<li>使用字符串定义事件类型。<ul>
+<li>容易出错。</li>
+<li>没有自动完成（除非将value保存为变量/常量）。</li>
+<li>通过命名规范来避免<em>消息</em>被错误的订阅者拦截。</li>
+</ul>
+</li>
+</ul>
+<h2 id="signals">Signals</h2>
+<ul>
+<li>每种事件类型都有自己的<em>控制器</em>。</li>
+<li>事件类型不依赖于字符串。</li>
+</ul>
+<h3 id="-">代码示例</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>  myObject.myCustomEventType.add(handler);
+  myObject.myCustomEventType.dispatch(param1, param2, ...);
+  myObject.myCustomEventType.remove(handler);
+</pre></td></tr></table></figure>
+
+<h3 id="-">优点</h3>
+<ul>
+<li>不依赖于字符串。<ul>
+<li>自动完成能正常工作。</li>
+<li>派发或监听一个不存在的事件类型会抛出错误（能够更早的发现错误）。</li>
+<li>不需要创建常量来存储字符串值。</li>
+</ul>
+</li>
+<li>细粒度的控制每个监听器和事件类型。<ul>
+<li>每个signal都是一个特定的目标/容器。</li>
+</ul>
+</li>
+<li>容易定义对象派发的<em>signal</em>。</li>
+<li>倾向于使用组合而不是继承。<ul>
+<li>别和原型链混淆了。</li>
+</ul>
+</li>
+</ul>
+<h3 id="-">缺点</h3>
+<ul>
+<li>不能派发任意类型的事件。<em>（这在大多数情况下也是个优点）</em></li>
+<li>每个事件类型都是个对象成员。<em>（这在大多数情况下也是个优点）</em><ul>
+<li>如果有很多事件类型的话，易导致<em>命名空间混乱</em>。</li>
+</ul>
+</li>
+<li>不会将事件类型和目标对象传递给callback使得很难使用通用的handler（工作于多个事件类型和目标）。</li>
+<li>与大多数人使用的不同。</li>
+</ul>
+<h2 id="-">结论</h2>
+<p>就像生活中的大多数东西一样，每种解决方案都有它的优点和缺点。决定哪种方式最适合取决于你。我希望本文能在你做决定时帮助到你。再一次，没有解决方案是万能的。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:betarabbit.github.io/">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 BetaRabbit
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'betarabbit';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

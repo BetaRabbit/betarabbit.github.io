@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Ruby的private和protected | 呆呆</title>
+  <title>Ruby的private和protected | 笨兔子</title>
   <meta name="author" content="BetaRabbit">
   
   <meta name="description" content="今天，下面这段程序让我纠结了很久，Ruby中private的概念真的很奇怪。。。
@@ -23,7 +23,7 @@
 14
 class Test private
   def test_print
-    puts 'test'
+    puts &#39;test&#39;
   end
 end
 
@@ -33,24 +33,23 @@ class Test2 &amp;">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <meta property="og:title" content="Ruby的private和protected"/>
-  <meta property="og:site_name" content="呆呆"/>
+  <meta property="og:site_name" content="笨兔子"/>
 
   
     <meta property="og:image" content="undefined"/>
   
 
   <link href="/favicon.png" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">呆呆</a></h1>
+  <h1><a href="/">笨兔子</a></h1>
   <h2><a href="/"></a></h2>
 </div>
 <nav id="main-nav" class="alignright">
@@ -82,7 +81,7 @@ class Test2 &amp;">
     <div class="entry">
       
         <p>今天，下面这段程序让我纠结了很久，Ruby中private的概念真的很奇怪。。。</p>
-<figure class="highlight lang-ruby"><table><tr><td class="gutter"><pre>1
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -97,13 +96,13 @@ class Test2 &amp;">
 13
 14
 </pre></td><td class="code"><pre><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="title">private</span></span>
-  <span class="function"><span class="keyword">def</span> <span class="title">test_print</span></span>
+  <span class="function"><span class="keyword">def</span> </span>test_print
     puts <span class="string">'test'</span>
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
 <span class="class"><span class="keyword">class</span> <span class="title">Test2</span> <span class="inheritance">&lt; <span class="parent">Test</span></span></span>
-  <span class="function"><span class="keyword">def</span> <span class="title">test_print2</span></span>
+  <span class="function"><span class="keyword">def</span> </span>test_print2
     <span class="comment"># self.test_print #=&gt; 这里加上self就不能调用，private method `test_print' called for # (NoMethodError)</span>
     test_print <span class="comment">#=&gt; 不加self就能调用</span>
   <span class="keyword">end</span>
@@ -135,21 +134,6 @@ class Test2 &amp;">
   </div>
 
         
-<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-  <span class="bds_more">分享到：</span>
-  <a class="bds_qzone"></a>
-  <a class="bds_tsina"></a>
-  <a class="bds_tqq"></a>
-  <a class="bds_renren"></a>
-  <a class="bds_t163"></a>
-  <a class="shareCount"></a>
-</div>
-<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
-<script type="text/javascript" id="bdshell_js"></script>
-<script type="text/javascript">
-document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-</script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -159,10 +143,14 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
 
 <section id="comment">
   <h1 class="title">留言</h1>
+
+  
   <div id="disqus_thread">
     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+  
 </section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -179,7 +167,7 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
@@ -193,11 +181,12 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2013 BetaRabbit
+  &copy; 2014 BetaRabbit
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 

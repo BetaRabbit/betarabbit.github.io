@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>IE下点击scrollbar会导致焦点移动到body | 呆呆</title>
+  <title>IE下点击scrollbar会导致焦点移动到body | 笨兔子</title>
   <meta name="author" content="BetaRabbit">
   
   <meta name="description" content="现象
@@ -14,24 +14,23 @@ Chrome曾经也有类似的问题，但在最新版中已经修正了，而Firef
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <meta property="og:title" content="IE下点击scrollbar会导致焦点移动到body"/>
-  <meta property="og:site_name" content="呆呆"/>
+  <meta property="og:site_name" content="笨兔子"/>
 
   
     <meta property="og:image" content="undefined"/>
   
 
   <link href="/favicon.png" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="呆呆" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">呆呆</a></h1>
+  <h1><a href="/">笨兔子</a></h1>
   <h2><a href="/"></a></h2>
 </div>
 <nav id="main-nav" class="alignright">
@@ -62,10 +61,10 @@ Chrome曾经也有类似的问题，但在最新版中已经修正了，而Firef
     </header>
     <div class="entry">
       
-        <h2>现象</h2>
+        <h2 id="-">现象</h2>
 <p>IE这货果然与众不同，当光标焦点在input时，点击同页面内其他区域的scrollbar，会导致焦点移动到body，从而触发绑定在input上的blur事件，如果input中的值与之前不同，甚至还会触发change事件...
 Chrome曾经也有类似的问题，但在最新版中已经修正了，而Firefox则完全没有这样的问题。</p>
-<h2>影响</h2>
+<h2 id="-">影响</h2>
 <p>这个问题看起来微不足道，实际上影响还是非常大的，主要表现在下面2个方面</p>
 <ul>
 <li><p>多数的suggest控件会出错
@@ -77,9 +76,9 @@ suggest往往是通过input(输入部分)和div(下拉框部分)组成。有时�
 这个更容易理解了，一般来说form的验证都是绑定在blur或者change事件上，如果form太长，需要移动滚动条才能看全的情况下，一旦鼠标点击滚动条就会错误的触发form验证操作，将无用的错误信息显示给用户。</p>
 </li>
 </ul>
-<h2>解决方案</h2>
+<h2 id="-">解决方案</h2>
 <p>我们来看看jQueryUI的Autocomplete是怎么解决这个问题的。</p>
-<figure class="highlight lang-js"><table><tr><td class="gutter"><pre>1
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -122,7 +121,7 @@ suggest往往是通过input(输入部分)和div(下拉框部分)组成。有时�
 41
 42
 </pre></td><td class="code"><pre><span class="comment">// input's blur event</span>
-blur: <span class="keyword">function</span>( event ) {
+blur: <span class="function"><span class="keyword">function</span><span class="params">( event )</span> {</span>
     <span class="keyword">if</span> ( <span class="keyword">this</span>.cancelBlur ) {
         <span class="keyword">delete</span> <span class="keyword">this</span>.cancelBlur;
         <span class="keyword">return</span>;
@@ -134,14 +133,14 @@ blur: <span class="keyword">function</span>( event ) {
 }
 
 <span class="comment">// dropdown's mousedown event</span>
-mousedown: <span class="keyword">function</span>( event ) {
+mousedown: <span class="function"><span class="keyword">function</span><span class="params">( event )</span> {</span>
     <span class="comment">// prevent moving focus out of the text field</span>
     event.preventDefault();
 
     <span class="comment">// IE doesn't prevent moving focus even with event.preventDefault()</span>
     <span class="comment">// so we set a flag to know when we should ignore the blur event</span>
     <span class="keyword">this</span>.cancelBlur = <span class="literal">true</span>;
-    <span class="keyword">this</span>._delay(<span class="keyword">function</span>() {
+    <span class="keyword">this</span>._delay(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
         <span class="keyword">delete</span> <span class="keyword">this</span>.cancelBlur;
     });
 
@@ -151,9 +150,9 @@ mousedown: <span class="keyword">function</span>( event ) {
     <span class="comment">// the user clicks somewhere outside of the autocomplete</span>
     <span class="keyword">var</span> menuElement = <span class="keyword">this</span>.menu.element[ <span class="number">0</span> ];
     <span class="keyword">if</span> ( !$( event.target ).closest( <span class="string">".ui-menu-item"</span> ).length ) {
-        <span class="keyword">this</span>._delay(<span class="keyword">function</span>() {
+        <span class="keyword">this</span>._delay(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
             <span class="keyword">var</span> that = <span class="keyword">this</span>;
-            <span class="keyword">this</span>.document.one( <span class="string">"mousedown"</span>, <span class="keyword">function</span>( event ) {
+            <span class="keyword">this</span>.document.one( <span class="string">"mousedown"</span>, <span class="function"><span class="keyword">function</span><span class="params">( event )</span> {</span>
                 <span class="keyword">if</span> ( event.target !== that.element[ <span class="number">0</span> ] &amp;&amp;
                         event.target !== menuElement &amp;&amp;
                         !$.contains( menuElement, event.target ) ) {
@@ -184,21 +183,6 @@ mousedown: <span class="keyword">function</span>( event ) {
   </div>
 
         
-<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-  <span class="bds_more">分享到：</span>
-  <a class="bds_qzone"></a>
-  <a class="bds_tsina"></a>
-  <a class="bds_tqq"></a>
-  <a class="bds_renren"></a>
-  <a class="bds_t163"></a>
-  <a class="shareCount"></a>
-</div>
-<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=6725026" ></script>
-<script type="text/javascript" id="bdshell_js"></script>
-<script type="text/javascript">
-document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-</script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -208,10 +192,14 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
 
 <section id="comment">
   <h1 class="title">留言</h1>
+
+  
   <div id="disqus_thread">
     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+  
 </section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -228,7 +216,7 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
   
     <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
   
@@ -242,11 +230,12 @@ document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2013 BetaRabbit
+  &copy; 2014 BetaRabbit
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 
