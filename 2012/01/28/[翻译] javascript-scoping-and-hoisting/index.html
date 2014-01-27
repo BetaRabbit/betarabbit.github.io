@@ -1,0 +1,434 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[翻译] JavaScript Scoping and Hoisting | 笨兔子</title>
+  <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="原文链接：JavaScript Scoping and Hoisting
+你知道下面的JavaScript代码执行后会alert出什么值吗？
+1
+2
+3
+4
+5
+6
+7
+8
+var foo = 1;
+function bar() {
+    if (!foo) {
+      var foo = 1">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="[翻译] JavaScript Scoping and Hoisting"/>
+  <meta property="og:site_name" content="笨兔子"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">笨兔子</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2012-01-27T20:29:55.000Z"><a href="/2012/01/28/[翻译] javascript-scoping-and-hoisting/">1月 28 2012</a></time>
+      
+      
+  
+    <h1 class="title">[翻译] JavaScript Scoping and Hoisting</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>原文链接：<a href="http://www.adequatelygood.com/2010/2/JavaScript-Scoping-and-Hoisting" target="_blank">JavaScript Scoping and Hoisting</a></p>
+<p>你知道下面的JavaScript代码执行后会alert出什么值吗？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="keyword">var</span> foo = <span class="number">1</span>;
+<span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (!foo) {
+      <span class="keyword">var</span> foo = <span class="number">10</span>;
+    }
+    alert(foo);
+}
+bar();
+</pre></td></tr></table></figure>
+
+
+<p>如果答案是&quot;10&quot;令你感到惊讶的话，那么下面这个会让你更加困惑：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="keyword">var</span> a = <span class="number">1</span>;
+<span class="function"><span class="keyword">function</span> <span class="title">b</span><span class="params">()</span> {</span>
+    a = <span class="number">10</span>;
+    <span class="keyword">return</span>;
+    <span class="function"><span class="keyword">function</span> <span class="title">a</span><span class="params">()</span> {</span>}
+}
+b();
+alert(a);
+</pre></td></tr></table></figure>
+
+
+<p>浏览器会alert“1”。那么，到底是怎么了？尽管这看起来有点奇怪、有点危险又有点令人困惑，但这事实上却是这门语言一个强力的具有表现力的特性。我不知道是不是有个标准来定义这种行为，但是我喜欢用”hoisting”来描述。这篇文章试着去解释这种机制，但是首先，让我们对JavaScript的scoping做一些必要的了解。</p>
+<h2 id="scoping-in-javascript">Scoping in JavaScript</h2>
+<p>对于JavaScript新手来说scoping是最令人困惑的部分之一。事实上，不仅仅是新手，我遇到或很多有经验的JavaScript程序员也不能完全理解scoping。JavaScript的scoping如此复杂的原因是它看上去非常像C系语言的成员。请看下面的C程序：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="preprocessor">#include &lt;stdio.h&gt;</span>
+<span class="keyword">int</span> main() {
+    <span class="keyword">int</span> x = <span class="number">1</span>;
+    <span class="built_in">printf</span>(<span class="string">"%d, "</span>, x); <span class="comment">// 1</span>
+    <span class="keyword">if</span> (<span class="number">1</span>) {
+        <span class="keyword">int</span> x = <span class="number">2</span>;
+        <span class="built_in">printf</span>(<span class="string">"%d, "</span>, x); <span class="comment">// 2</span>
+    }
+    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, x); <span class="comment">// 1</span>
+}
+</pre></td></tr></table></figure>
+
+
+<p>这段程序的输出是1,2,1。这是因为在C系语言有块级作用域(block-level scope),当进入到一个块时，就像if语句，在这个块级作用域中会声明新的变量，这些变量不会影响到外部作用域。但是JavaScript却不是这样。在Firebug中试试下面的代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre><span class="keyword">var</span> x = <span class="number">1</span>;
+console.log(x); <span class="comment">// 1</span>
+<span class="keyword">if</span> (<span class="literal">true</span>) {
+    <span class="keyword">var</span> x = <span class="number">2</span>;
+    console.log(x); <span class="comment">// 2</span>
+}
+console.log(x);<span class="comment">// 2</span>
+</pre></td></tr></table></figure>
+
+
+<p>在这段代码中，Firebug显示1，2,2。这是因为JavaScript是函数级作用域(function-level scope)。这和C系语言是完全不同的。块，就像if语句，并不会创建一个新的作用域。只有函数才会创建新的作用域。</p>
+<p>对于大部分熟悉C，C++，C#或是Java的程序员来说，这是意料之外并且不被待见的。幸运的是，因为JavaScript函数的灵活性，对于这个问题我们有一个解决方案。如果你必须在函数中创建一个临时的作用域，请像下面这样做：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> x = <span class="number">1</span>;
+    <span class="keyword">if</span> (x) {
+        (<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+            <span class="keyword">var</span> x = <span class="number">2</span>;
+            <span class="comment">// some other code</span>
+        }());
+    }
+    <span class="comment">// x is still 1.</span>
+}
+</pre></td></tr></table></figure>
+
+
+<p>这种方面确实非常灵活，它使用在任何需要创建一个临时作用域的地方，不仅仅是某个块中。但是，我强烈建议你花点时间好好理解下JavaScript scoping。它实在是非常强力，而且它也是我最喜欢的语言特性之一。如果你很好的理解了scoping，理解hoisting将会更加容易。</p>
+<h2 id="declarations-names-and-hoisting">Declarations, Names, and Hoisting</h2>
+<p>在JavaScript中，一个作用域(scope)中的名称(name)有以下四种：</p>
+<ol>
+<li>语言自身定义(Language-defined): 所有的作用域默认都会包含this和arguments。</li>
+<li>函数形参(Formal parameters): 函数有名字的形参会进入到函数体的作用域中。</li>
+<li>函数声明(Function decalrations): 通过function foo() {}的形式。</li>
+<li>变量声明(Variable declarations): 通过var foo;的形式。</li>
+</ol>
+<p>函数声明和变量声明总是被JavaScript解释器隐式地提升(hoist)到包含他们的作用域的最顶端。很明显的，语言自身定义和函数形参已经处于作用域顶端。这就像下面的代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
+    bar();
+    <span class="keyword">var</span> x = <span class="number">1</span>;
+}
+</pre></td></tr></table></figure>
+
+
+<p>实际上被解释成像下面那样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> x;
+    bar();
+    x = <span class="number">1</span>;
+}
+</pre></td></tr></table></figure>
+
+
+<p>结果是不管声明是否被执行都没有影响。下面的两段代码是等价的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="literal">false</span>) {
+        <span class="keyword">var</span> x = <span class="number">1</span>;
+    }
+    <span class="keyword">return</span>;
+    <span class="keyword">var</span> y = <span class="number">1</span>;
+}
+<span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> x, y;
+    <span class="keyword">if</span> (<span class="literal">false</span>) {
+        x = <span class="number">1</span>;
+    }
+    <span class="keyword">return</span>;
+    y = <span class="number">1</span>;
+}
+</pre></td></tr></table></figure>
+
+
+<p>注意到声明的赋值部分并没有被提升(hoist)。只有声明的名称被提升了。这和函数声明不同，函数声明中，整个函数体也都会被提升。但是请记住，声明一个函数一般来说有两种方式。考虑下面的JavaScript代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">()</span> {</span>
+    foo(); <span class="comment">// TypeError "foo is not a function"</span>
+    bar(); <span class="comment">// "this will run!"</span>
+    <span class="keyword">var</span> foo = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span> <span class="comment">// 函数表达式被赋值给变量'foo'</span>
+        alert(<span class="string">"this won't run!"</span>);
+    }
+    <span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">()</span> {</span> <span class="comment">// 名为'bar'的函数声明</span>
+        alert(<span class="string">"this will run!"</span>);
+    }
+}
+test();
+</pre></td></tr></table></figure>
+
+
+<p>在这里，只有函数声明的方式会连函数体一起提升，而函数表达式中只会提升名称，函数体只有在执行到赋值语句时才会被赋值。</p>
+<p>以上就包括了所有关于提升(hoisting)的基础，看起来并没有那么复杂或是令人困惑对吧。但是，这是JavaScript，在某些特殊情况下，总会有那么一点复杂。</p>
+<h2 id="name-resolution-order">Name Resolution Order</h2>
+<p>需要记住的最最重要的特例就是名称解析顺序(name resolution order)。记住一个名称进入一个作用域一共有四种方式。我上面列出的顺序就是他们解析的顺序。总的来说，如果一个名称已经被定义了，他绝不会被另一个拥有不用属性的同名名称覆盖。这就意味着，函数声明比变量声明具有更高的优先级。但是这却不意味着对这个名称的赋值无效，仅仅是声明的部分会被忽略而已。但是有下面几个例外：</p>
+<p>内置的名称arguments的行为有些怪异。他似乎是在形参之后，函数声明之前被声明。这就意味着名为arguments的形参会比内置的arguments具有更高的优先级，即使这个形参是undefined。这是一个不好的特性，不要使用arguments作为形参。
+任何地方试图使用this作为一个标识都会引起语法错误，这是一个好的特性。
+如果有多个同名形参，那位于列表最后的形参拥有最高的优先级，即使它是undefined。</p>
+<h2 id="name-function-expressions">Name Function Expressions</h2>
+<p>你可以在函数表达式中给函数定义名称，就像函数声明的语句一样。但这并不会使它成为一个函数声明，并且这个名称也不会被引入到作用域中，而且，函数体也不会被提升(hoist)。这里有一些代码可以说明我说的是什么意思：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="code"><pre>foo(); <span class="comment">// TypeError "foo is not a function"</span>
+bar(); <span class="comment">// valid</span>
+baz(); <span class="comment">// TypeError "baz is not a function"</span>
+spam(); <span class="comment">// ReferenceError "spam is not defined"</span>
+
+<span class="keyword">var</span> foo = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>}; <span class="comment">// 匿名函数表达式('foo'被提升)</span>
+<span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">()</span> {</span>}; <span class="comment">// 函数声明('bar'和函数体被提升)</span>
+<span class="keyword">var</span> baz = <span class="function"><span class="keyword">function</span> <span class="title">spam</span><span class="params">()</span> {</span>}; <span class="comment">// 命名函数表达式(只有'baz'被提升)</span>
+
+foo(); <span class="comment">// valid</span>
+bar(); <span class="comment">// valid</span>
+baz(); <span class="comment">// valid</span>
+spam(); <span class="comment">// ReferenceError "spam is not defined"</span>
+</pre></td></tr></table></figure>
+
+
+<h2 id="how-to-code-with-this-knowledge">How to Code With This Knowledge</h2>
+<p>现在你明白了作用域和提升，那么这对编写JavaScript代码意味着什么呢？最重要的一条是声明变量时总是使用var语句。我强烈的建议你在每个作用域中都只在最顶端使用一个var。如果你强制自己这么做，你永远也不会被提升相关的问题困扰。尽管这么做会使的跟踪当前作用域实际声明了哪些变量变得更加困难。我建议在JSLint使用onevar选项。如果你做了所有前面的建议，你的代码看起来会是下面这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="comment">/*jslint onevar: true [...] */</span>
+<span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">(a, b, c)</span> {</span>
+    <span class="keyword">var</span> x = <span class="number">1</span>,
+        bar,
+        baz = <span class="string">"something"</span>;
+}
+</pre></td></tr></table></figure>
+
+
+<p>What the Standard Says</p>
+<p>我发现直接参考ECMAScript Standard (pdf)来理解这些东西是如何运作的总是很有用。下面是关于变量声明和作用域的一段摘录(section 12.2.2)：</p>
+<blockquote><p>If the variable statement occurs inside a FunctionDeclaration, the variables are defined with function-local scope in that function, as described in section 10.1.3. Otherwise, they are defined with global scope (that is, they are created as members of the global object, as described in section 10.1.3) using property attributes { DontDelete }. Variables are created when the execution scope is entered. A Block does not define a new execution scope. Only Program and FunctionDeclaration produce a new scope. Variables are initialised to undefined when created. A variable with an Initialiser is assigned the value of its AssignmentExpression when the VariableStatement is executed, not when the variable is created.</p>
+</blockquote>
+
+
+<p>我希望这篇文章能够给JavaScript程序员最容易困惑的部分一些启示。我尽力写的全面，以免引起更多的困惑。如果我写错了或是漏掉了某些重要的东西，请一定让我知道。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:betarabbit.github.io/">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 BetaRabbit
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'betarabbit';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

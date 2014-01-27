@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JavaScript中位操作符的特殊作用 | 笨兔子</title>
+  <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="Javascript主要有以下几种位操作符：
+
+AND ( &amp; )
+OR ( | )
+XOR ( ^ )
+NOT ( ~ )
+LEFT SHIFT ( &lt;&lt; )
+RIGHT SHIFT ( &gt;&gt; )
+ZERO-FILL RIGHT SHIFT ( &gt;&gt;&amp;g">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JavaScript中位操作符的特殊作用"/>
+  <meta property="og:site_name" content="笨兔子"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">笨兔子</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-04-29T15:47:00.000Z"><a href="/2013/04/29/javascript中位操作符的特殊作用/">4月 29 2013</a></time>
+      
+      
+  
+    <h1 class="title">JavaScript中位操作符的特殊作用</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Javascript主要有以下几种位操作符：</p>
+<ul>
+<li>AND ( <code>&amp;</code> )</li>
+<li>OR ( <code>|</code> )</li>
+<li>XOR ( <code>^</code> )</li>
+<li>NOT ( <code>~</code> )</li>
+<li>LEFT SHIFT ( <code>&lt;&lt;</code> )</li>
+<li>RIGHT SHIFT ( <code>&gt;&gt;</code> )</li>
+<li>ZERO-FILL RIGHT SHIFT ( <code>&gt;&gt;&gt;</code> )</li>
+</ul>
+<p>一般来说，我们在Javascript中很少能用到这些位操作符，但在某些特殊情况下，这些简单的操作符却能抵得上好几行代码（如果不在乎可读性的话）。</p>
+<h2 id="-n-1-">-(n+1)</h2>
+<p>对一个数进行<code>~</code>运算，等同于<code>-(n+1)</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>~<span class="number">1</span> === -<span class="number">2</span> <span class="comment">// =&gt; true</span>
+</pre></td></tr></table></figure>
+
+
+<p><strong>Note</strong>: 这只能应用于整数部分，<code>~1.1 === -2</code></p>
+<p>这在实际使用中常常配合<code>indexOf</code>一起使用，<code>if (~array.indexOf(string))</code>等同于<code>if (array中没有string)</code></p>
+<h2 id="-">取整(忽略小数部分)</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>~~<span class="number">1.1</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
+<span class="number">1.1</span> ^ <span class="number">0</span> === <span class="number">1</span> <span class="comment">// =&gt; true</span>
+</pre></td></tr></table></figure>
+
+
+<p>这两个在某些JS库或游戏编程中经常使用。</p>
+<h2 id="-">总结</h2>
+<p>总的来说，位操作符毕竟可读性不太好，列出来只是为了以后遇到这样的代码能看的懂，实际项目中还是不要玩这些花的东西比较好。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:betarabbit.github.io/">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 BetaRabbit
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'betarabbit';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

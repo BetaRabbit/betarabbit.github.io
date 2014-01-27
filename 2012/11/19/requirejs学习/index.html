@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>RequireJS学习 | 笨兔子</title>
+  <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。
+最新版可以在这里下载。
+基本用法
+假设你的工程目录结构如下：
+
+project
+index.html
+js
+lib
+jquery.js
+
+
+app
+sub_ap">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="RequireJS学习"/>
+  <meta property="og:site_name" content="笨兔子"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">笨兔子</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2012-11-19T08:38:20.000Z"><a href="/2012/11/19/requirejs学习/">11月 19 2012</a></time>
+      
+      
+  
+    <h1 class="title">RequireJS学习</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>RequireJS是一个JavaScript文件和模块加载器。除了可以在浏览器中使用外，还可以用Node或Rhino等Server端环境。</p>
+<p>最新版可以在<a href="http://requirejs.org/docs/download.html" target="_blank">这里</a>下载。</p>
+<h2 id="-">基本用法</h2>
+<p>假设你的工程目录结构如下：</p>
+<ul>
+<li>project<ul>
+<li>index.html</li>
+<li>js<ul>
+<li>lib<ul>
+<li>jquery.js</li>
+</ul>
+</li>
+<li>app<ul>
+<li>sub_app.js</li>
+<li>app.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>首先，将requirejs.js放入js/lib目录。</p>
+<ul>
+<li>project<ul>
+<li>index.html</li>
+<li>js<ul>
+<li>lib<ul>
+<li>jquery.js</li>
+<li>require.js</li>
+</ul>
+</li>
+<li>app<ul>
+<li>sub_app.js</li>
+<li>app.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>然后，在index.html中引入<code>&lt;script&gt;</code>用来加载require.js。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">script</span> <span class="attribute">data-main</span>=<span class="value">"js/app"</span> <span class="attribute">src</span>=<span class="value">"js/lib/require.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+
+<p>在app.js中，使用<code>require</code>方法加载其他脚本</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre>requirejs.config({
+    <span class="comment">// 默认从js/lib目录加载</span>
+    baseUrl: <span class="string">'js/lib'</span>,
+    <span class="comment">// 如果模块ID以app开头，则从js/app目录加载</span>
+    <span class="comment">// paths相对于baseUrl设定</span>
+    <span class="comment">// 不要指定".js"后缀，因为paths可以是一个目录</span>
+    paths: {
+        app: <span class="string">'../app'</span>,
+        jquery: <span class="string">'jquery.min'</span>,
+    }
+});
+ 
+<span class="comment">// app入口</span>
+<span class="built_in">require</span>([<span class="string">'app/sub_app'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(sub)</span> {</span>
+    sub.hello();
+});
+</pre></td></tr></table></figure>
+
+
+<p>在sub_app.js中定义一个module</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre><span class="comment">// define相对于baseUrl设定</span>
+define([<span class="string">'jquery'</span>], <span class="function"><span class="keyword">function</span> <span class="params">($)</span> {</span>
+    <span class="keyword">return</span> {
+        log: <span class="function"><span class="keyword">function</span> <span class="params">(msg)</span> {</span>
+            <span class="keyword">if</span> (window.console &amp;&amp; console.log) {
+                console.log(msg);
+            } <span class="keyword">else</span> {
+                alert(msg);
+            }
+        },
+        hello: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+            <span class="keyword">this</span>.log(<span class="string">"Hello, I'm powered by jQuery "</span> + $().jquery + <span class="string">"!"</span>);
+        }
+    };
+});
+</pre></td></tr></table></figure>
+
+
+<p>现在，打开浏览器的控制台，应该能看到我们自定义的module成功使用jQuery输出了下面这句话：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>Hello, I'm powered by jQuery 1.8.3! 
+</pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:betarabbit.github.io/">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 BetaRabbit
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'betarabbit';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

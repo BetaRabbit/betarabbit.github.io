@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>innerText和textContent | 笨兔子</title>
+  <meta name="author" content="BetaRabbit">
+  
+  <meta name="description" content="今天在使用innerText时遇到一个兼容性问题，FireFox不支持innerText方法，查了MDN，发现FireFox下有个类似的方法，叫textContent，它和IE的innerText类似， 都是用来获取（设置）元素中text的方法。
+语法
+
+设置
+1
+element.textConte">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="innerText和textContent"/>
+  <meta property="og:site_name" content="笨兔子"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="笨兔子" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">笨兔子</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-02-26T12:11:32.000Z"><a href="/2013/02/26/innertext和textcontent/">2月 26 2013</a></time>
+      
+      
+  
+    <h1 class="title">innerText和textContent</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>今天在使用<code>innerText</code>时遇到一个兼容性问题，FireFox不支持<code>innerText</code>方法，查了MDN，发现FireFox下有个类似的方法，叫<code>textContent</code>，它和IE的<code>innerText</code>类似， 都是用来获取（设置）元素中text的方法。</p>
+<h2 id="-">语法</h2>
+<ul>
+<li><p>设置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>element.textContent = “text”;
+</pre></td></tr></table></figure>
+</li>
+<li><p>获取</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="keyword">var</span> text = element.textContent;
+</pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<p><strong>Note</strong>: textContent和innerText类似，也会同时获取子元素的text content，比如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>&lt;div&gt;<span class="keyword">this</span> is &lt;span&gt;a&lt;<span class="regexp">/span&gt; text!&lt;/</span>div&gt;
+<span class="comment">// div.textContent == "this is a text!"</span>
+</pre></td></tr></table></figure>
+
+
+<h2 id="-innertext-">与<code>innerText</code>的区别</h2>
+<ul>
+<li><code>textContent</code>会获取所有元素的content，包括<code>&lt;script&gt;</code>和<code>&lt;style&gt;</code>元素</li>
+<li><code>innerText</code>不会获取hidden元素的content，而<code>textContent</code>会</li>
+<li><code>innerText</code>会触发reflow，而<code>textContent</code>不会</li>
+<li><code>innerText</code>返回值会被格式化，而<code>textContent</code>不会</li>
+</ul>
+<h2 id="-">主流浏览器支持情况</h2>
+<ul>
+<li>IE 9+</li>
+<li>Chrome 1+</li>
+<li>FireFox(Gecko)</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:betarabbit.github.io/">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>12</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>1</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 BetaRabbit
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'betarabbit';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
